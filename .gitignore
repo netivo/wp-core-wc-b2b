@@ -2,3 +2,4 @@
 .vs_code
 .phpunit.result.cache
 vendor
+node_modules

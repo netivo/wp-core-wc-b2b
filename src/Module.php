@@ -12,6 +12,7 @@ namespace Netivo\Module\WooCommerce\B2B;
 use Netivo\Core\Database\EntityManager;
 use Netivo\Module\WooCommerce\B2B\Admin\Panel;
 use Netivo\Module\WooCommerce\B2B\Controller\User as UserController;
+use Netivo\Module\WooCommerce\B2B\Gutenberg\RegisterForm as RegisterFormBlock;
 use Netivo\Module\WooCommerce\B2B\Model\Discount as DiscountModel;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -69,6 +70,7 @@ class Module {
 	protected function __construct() {
 		$this->userController = new UserController();
 		new Rewrite();
+		new RegisterFormBlock();
 		EntityManager::createTable( DiscountModel::class );
 
 		if ( is_admin() ) {

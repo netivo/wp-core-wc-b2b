@@ -1,0 +1,173 @@
+@use "sass:map";
+
+$breakpoints: (
+        'xs': 0,
+        'sm': 576px,
+        'md': 768px,
+        'lg': 991px,
+        'xl': 1200px,
+        'xxl': 1400px
+);
+
+@mixin container {
+  max-width: var(--wp--style--global--content-size);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing--md);
+  padding-right: var(--spacing--md);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@mixin container-narrow {
+  max-width: calc(var(--wp--style--global--content-size) / 2);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--spacing--md);
+  padding-right: var(--spacing--md);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@mixin container-wide {
+  max-width: var(--wp--style--global--wide-size);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: max(var(--spacing--md), calc((min((100vw - (var(--spacing--md) * 2)), var(--wp--style--global--wide-size)) - var(--wp--style--global--content-size)) / 2 + var(--spacing--md)));
+  padding-right: max(var(--spacing--md), calc((min((100vw - (var(--spacing--md) * 2)), var(--wp--style--global--wide-size)) - var(--wp--style--global--content-size)) / 2 + var(--spacing--md)));
+  width: calc(100% - (var(--spacing--md) * 2));
+  box-sizing: border-box;
+
+}
+
+@mixin media($direction: 'up', $breakpoint) {
+
+  @if map.has-key($breakpoints, $breakpoint) {
+    $value: map.get($breakpoints, $breakpoint);
+
+    @if $direction == 'up' {
+
+      @media (min-width: $value) {
+        @content;
+      }
+    } @else if $direction == 'down' {
+
+      @media (max-width: ($value - 0.02px)) {
+        @content;
+      }
+    } @else if $direction == 'only' {
+      $next-breakpoint: map.next($breakpoints, $breakpoint);
+
+      @if $next-breakpoint {
+
+        @media (min-width: $value) and (max-width: (map.get($breakpoints, $next-breakpoint) - 0.02px)) {
+          @content;
+        }
+      } @else {
+
+        @media (min-width: $value) {
+          @content;
+        }
+      }
+    }
+  } @else {
+
+    @warn "Breakpoint error: #{$breakpoint}";
+  }
+}
+
+@mixin button($type: 'primary') {
+  padding: 0.5rem 1rem;
+  display: inline-flex;
+  font-size: var(--fz-12);
+  line-height: 1.5;
+  font-weight: 600;
+  margin: 0;
+  border-radius: var(--border-radius--small);
+  transition: background-color 0.3s, color 0.3s ease-in-out;
+  cursor: pointer;
+  width: auto;
+  box-sizing: border-box;
+
+  @if $type == 'primary' {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    border: 1px solid var(--color-primary);
+  } @else if $type == 'secondary' {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+    border: 1px solid var(--color-secondary);
+  } @else if $type == 'reverse' {
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-primary);
+  }
+
+  &:visited, &:focus, &:active {
+
+    @if $type == 'primary' {
+      color: var(--color-white);
+    } @else if $type == 'reverse' {
+      color: var(--color-white);
+    } @else if $type == 'reverse' {
+      color: var(--color-primary);
+    }
+  }
+
+  &:focus,
+  &:hover {
+
+    @if $type == 'primary' {
+      background-color: transparent;
+      color: var(--color-primary);
+    } @else if $type == 'secondary' {
+      background-color: transparent;
+      color: var(--color-secondary);
+    } @else if $type == 'reverse' {
+      background-color: var(--color-primary);
+      color: var(--color-white);
+    }
+  }
+}
+
+@mixin button--icon($type: 'primary') {
+
+  @include button($type);
+  align-items: center;
+  gap: .5rem;
+  justify-content: center;
+
+  svg {
+    height: 1.5rem;
+    width: 1.5rem;
+
+    transition: fill var(--trainsition);
+  }
+
+  &:focus,
+  &:hover {
+    svg {
+      @if $type == 'primary' {
+        fill: var(--color-primary);
+      } @else if $type == 'secondary' {
+        fill: var(--color-secondary);
+      } @else if $type == 'reverse' {
+        fill: var(--color-white);
+      }
+    }
+  }
+}
+
+/*
+
+.element {
+  // Domyślnie mobile-first
+  @include media('up', 'md') { ... }
+
+  // Tylko tablet
+  @include media('only', 'md') { ... }
+
+  // Mobile
+  @include media('down', 'sm') { ... }
+}
+*/
