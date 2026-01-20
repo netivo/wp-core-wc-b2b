@@ -10,6 +10,8 @@
 namespace Netivo\Module\WooCommerce\B2B\Model;
 
 use Netivo\Core\Database\Entity;
+use Netivo\Core\Database\EntityManager;
+use WC_Product;
 use WP_User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -47,6 +49,12 @@ class Discount extends Entity {
 	 * @var int
 	 */
 	private int $type_id;
+
+	/**
+	 * @Column(name=price_type,type=varchar(20),format=%s,required=true)
+	 * @var string
+	 */
+	private string $price_type;
 
 	/**
 	 * @Column(name=value,type=varchar(20),format=%s,required=true)
@@ -111,6 +119,13 @@ class Discount extends Entity {
 	/**
 	 * @return string
 	 */
+	public function get_price_type(): string {
+		return $this->price_type;
+	}
+
+	/**
+	 * @return string
+	 */
 	public function get_value(): string {
 		return $this->value;
 	}
@@ -121,4 +136,53 @@ class Discount extends Entity {
 	public function get_user(): ?WP_User {
 		return $this->user;
 	}
+
+	/**
+	 * Retrieves the product discounts associated with a specific user and product.
+	 *
+	 * @param int|string $user_id The ID of the user for whom discounts are being retrieved.
+	 * @param WC_Product $product The ID of the product for which discounts are being retrieved.
+	 *
+	 * @return Discount|null An array of discounts if found, or null if no discounts are available.
+	 */
+	public static function get_product_discount_for_user( int|string $user_id, WC_Product $product ): ?Discount {
+		$em = EntityManager::get( self::class );
+
+		try {
+			$product_discounts = $em->findAll( [
+				'user_id' => [ 'type' => '%s', 'value' => $user_id ],
+				'type'    => [ 'type' => '%s', 'value' => 'product' ],
+				'type_id' => [ 'type' => '%s', 'value' => $product->get_id() ]
+			] );
+			if ( ! empty( $product_discounts ) ) {
+				return $product_discounts[0];
+			}
+			$product_categories   = $product->get_category_ids();
+			$categories_discounts = $em->findAll( [
+				'user_id' => [ 'type' => '%s', 'value' => $user_id ],
+				'type'    => [ 'type' => '%s', 'value' => 'category' ],
+				'type_id' => [ 'operator' => 'IN', 'type' => '(%s)', 'value' => implode( ',', $product_categories ) ]
+			] );
+			if ( ! empty( $categories_discounts ) ) {
+				if ( count( $categories_discounts ) === 1 ) {
+					return $categories_discounts[0];
+				}
+				$max          = 0;
+				$max_discount = null;
+				foreach ( $categories_discounts as $dsc ) {
+					if ( $dsc->get_value() > $max ) {
+						$max          = $dsc->get_value();
+						$max_discount = $dsc;
+					}
+				}
+
+				return $max_discount;
+			}
+		} catch ( \ReflectionException $e ) {
+			return null;
+		}
+
+		return null;
+	}
+
 }

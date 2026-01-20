@@ -58,6 +58,30 @@ class Module {
 		return self::get_instance()->get_user_controller();
 	}
 
+	public static function is_b2b_context(): bool {
+		$var = get_query_var( 'b2b' );
+
+		if ( ! empty( $var ) ) {
+			return true;
+		}
+
+		$b2b_base_url = get_option( 'nt_b2b_base_url', 'panel-b2b' );
+
+		if ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) {
+			if ( isset( $_SERVER['HTTP_REFERER'] ) && str_contains( $_SERVER['HTTP_REFERER'], $b2b_base_url ) ) {
+				return true;
+			}
+		}
+		if ( str_contains( $_SERVER['REQUEST_URI'], 'panel-b2b' ) ) {
+			return true;
+		}
+		if ( array_key_exists( 'b2b', $_GET ) && $_GET['b2b'] == 1 ) {
+			return true;
+		}
+
+		return true;
+	}
+
 	/**
 	 * Initializes the constructor for the class.
 	 *
