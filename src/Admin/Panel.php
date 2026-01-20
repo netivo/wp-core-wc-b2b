@@ -16,8 +16,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Initializes the Panel class responsible for managing the permalink settings integration.
+ * This class ensures the necessary configuration is loaded upon instantiation.
+ *
+ */
 class Panel {
 
+	/**
+	 *
+	 * @return void
+	 */
 	public function __construct() {
 		new Permalink();
 	}

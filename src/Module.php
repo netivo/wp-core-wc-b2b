@@ -19,12 +19,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Represents the core module class, providing a singleton instance for managing
+ * the module's functionality and associated components such as the UserController.
+ */
 class Module {
 
+	/**
+	 * Holds the instance of the class or object, initialized to null.
+	 */
 	protected static ?self $instance = null;
 
+	/**
+	 *
+	 */
 	protected UserController $userController;
 
+	/**
+	 * Retrieves the singleton instance of the class.
+	 *
+	 * @return self Returns the single instance of the class.
+	 */
 	public static function get_instance(): self {
 		if ( empty( self::$instance ) ) {
 			self::$instance = new self();
@@ -33,6 +48,24 @@ class Module {
 		return self::$instance;
 	}
 
+	/**
+	 * Retrieves the instance of the UserController.
+	 *
+	 * @return UserController The instance of the UserController.
+	 */
+	public static function user_controller(): UserController {
+		return self::get_instance()->get_user_controller();
+	}
+
+	/**
+	 * Initializes the constructor for the class.
+	 *
+	 * This method sets up the necessary components, including the UserController,
+	 * Rewrite object, and database table creation for the DiscountModel. Additionally,
+	 * it initializes the admin Panel if the current environment is in the admin context.
+	 *
+	 * @return void
+	 */
 	protected function __construct() {
 		$this->userController = new UserController();
 		new Rewrite();
@@ -44,6 +77,11 @@ class Module {
 	}
 
 
+	/**
+	 * Gets the UserController instance associated with this object.
+	 *
+	 * @return UserController The instance of the UserController.
+	 */
 	public function get_user_controller(): UserController {
 		return $this->userController;
 	}
@@ -61,9 +99,5 @@ class Module {
 		}
 
 		return null;
-	}
-
-	public static function user_controller(): UserController {
-		return self::get_instance()->get_user_controller();
 	}
 }

@@ -14,8 +14,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Provides custom rewrite rules and query variables for shop-related endpoints in a Business-to-Business (B2B) setup.
+ *
+ * This class enables custom URL structures and query variables to enhance the functionality of
+ * WooCommerce shop pages in a B2B context. It modifies the URL rewrite rules and registers
+ * additional query parameters to support special use cases for products, categories, cart, and checkout.
+ */
 class Rewrite {
 
+	/**
+	 * Class constructor.
+	 *
+	 * Registers actions and filters to initialize shop endpoints and query variables.
+	 *
+	 * @return void
+	 */
 	public function __construct() {
 		add_action( 'init', [ $this, 'register_shop_endpoints' ], 1 );
 		add_filter( 'query_vars', [ $this, 'register_query_vars' ], 0 );

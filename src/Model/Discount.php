@@ -57,6 +57,15 @@ class Discount extends Entity {
 
 	private ?WP_User $user = null;
 
+	/**
+	 * Dynamically sets the value of a class property if it exists.
+	 * Additionally, performs specific actions based on the property name and state.
+	 *
+	 * @param string $name The name of the property to set.
+	 * @param mixed $value The value to assign to the property.
+	 *
+	 * @return void
+	 */
 	public function __set( string $name, mixed $value ) {
 		if ( property_exists( $this, $name ) ) {
 			$this->$name = $value;
@@ -72,6 +81,9 @@ class Discount extends Entity {
 		}
 	}
 
+	/**
+	 * @return int
+	 */
 	public function get_id(): int {
 		return $this->id;
 	}

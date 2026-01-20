@@ -18,6 +18,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Handles the registration of routes and user registration for a B2B account, with CAPTCHA validation.
+ */
 class Form extends RestController {
 	/**
 	 * Namespace of Rest Endpoint
