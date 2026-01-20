@@ -9,7 +9,6 @@
 
 namespace Netivo\Module\WooCommerce\B2B\Model;
 
-use Netivo\AleSmaki\Model\Offer;
 use Netivo\Core\Database\Entity;
 use WP_User;
 
