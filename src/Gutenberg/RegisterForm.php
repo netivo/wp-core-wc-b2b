@@ -10,6 +10,7 @@ namespace Netivo\Module\WooCommerce\B2B\Gutenberg;
 
 use Netivo\Core\Gutenberg;
 use Netivo\Module\WooCommerce\B2B\Module;
+use Override;
 
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,6 +18,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Class RegisterForm
+ *
+ * Handles the registration and rendering of a Gutenberg block.
+ */
 class RegisterForm extends Gutenberg {
 	/**
 	 * @var string|null
@@ -38,9 +44,20 @@ class RegisterForm extends Gutenberg {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Register a Gutenberg block
+	 *
+	 * This method registers a Gutenberg block using the provided block.json file.
+	 * If a render callback is set, it will be included in the registration arguments.
+	 *
+	 * @return void
+	 *
+	 * @throws \Exception If the block.json file is not found.
+	 */
+	#[Override]
 	public function register_block(): void {
 
-		$block_json = Module::get_module_path() . 'dist/gutenberg/register-form/block.json';
+		$block_json = Module::get_module_path() . '/dist/gutenberg/register-form/block.json';
 		if ( file_exists( $block_json ) ) {
 			$args = [];
 			if ( ! empty( $this->callback ) ) {

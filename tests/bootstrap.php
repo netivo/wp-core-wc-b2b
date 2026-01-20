@@ -66,6 +66,15 @@ namespace Netivo\Core {
 			}
 		}
 	}
+
+	if ( ! class_exists( 'Netivo\Core\Gutenberg' ) ) {
+		abstract class Gutenberg {
+			public function __construct() {
+			}
+
+			abstract public function register_block(): void;
+		}
+	}
 }
 
 namespace {
