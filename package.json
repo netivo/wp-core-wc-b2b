@@ -14,6 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@netivo/scripts": "git+ssh://git@github.com:netivo/scripts.git",
-    "@wordpress/stylelint-config": "^23.16.0"
+    "@netivo/base-scripts": "git+ssh://git@github.com:netivo/base-scripts.git",
+    "@wordpress/stylelint-config": "^23.16.0",
+    "pristinejs": "^1.1.0"
   }
 }
