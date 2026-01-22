@@ -29,5 +29,6 @@ class Panel {
 	 */
 	public function __construct() {
 		new Permalink();
+		new Menu();
 	}
 }
