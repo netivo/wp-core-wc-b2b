@@ -21,6 +21,7 @@ class Product {
 
 	public function __construct() {
 		add_filter( 'woocommerce_product_get_price', [ $this, 'change_price' ], 10, 2 );
+		add_filter( 'woocommerce_product_get_backorder', [ $this, 'enable_backorder' ] );
 	}
 
 	/**
@@ -44,5 +45,13 @@ class Product {
 		}
 
 		return $price;
+	}
+
+	public function enable_backorder( $backorder ) {
+		if ( ! is_admin() && Module::is_b2b_context() ) {
+			return 'yes';
+		}
+
+		return $backorder;
 	}
 }
