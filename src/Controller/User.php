@@ -27,7 +27,7 @@ class User {
 	public function user_exists( string $email ): bool {
 		$user = get_user_by( 'email', $email );
 
-		if ( ! $user ) {
+		if ( $user ) {
 			return true;
 		}
 
