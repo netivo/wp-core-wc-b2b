@@ -151,7 +151,7 @@ class Module {
 	 */
 	protected function register_role(): void {
 		$role_exists = get_option( 'nt_b2b_role_exists' );
-		if ( ! empty( $role_exists ) ) {
+		if ( empty( $role_exists ) ) {
 			add_action( 'init', array( $this, 'init_role' ) );
 		}
 	}
