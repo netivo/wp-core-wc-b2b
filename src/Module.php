@@ -58,6 +58,15 @@ class Module {
 		return self::get_instance()->get_user_controller();
 	}
 
+	/**
+	 * Determines if the current context is a B2B (Business-to-Business) context.
+	 *
+	 * This method checks various conditions such as query variables, request URIs,
+	 * HTTP referer headers, and GET parameters to identify if the current context
+	 * is related to B2B.
+	 *
+	 * @return bool True if the current context is identified as B2B, otherwise false.
+	 */
 	public static function is_b2b_context(): bool {
 		$var = get_query_var( 'b2b' );
 
@@ -67,19 +76,25 @@ class Module {
 
 		$b2b_base_url = get_option( 'nt_b2b_base_url', 'panel-b2b' );
 
+		if ( empty( $b2b_base_url ) ) {
+			$b2b_base_url = 'panel-b2b';
+		}
+
 		if ( function_exists( 'wp_doing_ajax' ) && wp_doing_ajax() ) {
-			if ( isset( $_SERVER['HTTP_REFERER'] ) && str_contains( $_SERVER['HTTP_REFERER'], $b2b_base_url ) ) {
+			if ( isset( $_SERVER['HTTP_REFERER'] ) && str_contains( (string) $_SERVER['HTTP_REFERER'], (string) $b2b_base_url ) ) {
 				return true;
 			}
 		}
-		if ( str_contains( $_SERVER['REQUEST_URI'], $b2b_base_url ) ) {
-			return true;
-		}
-		if ( array_key_exists( 'b2b', $_GET ) && $_GET['b2b'] == 1 ) {
+
+		if ( isset( $_SERVER['REQUEST_URI'] ) && $_SERVER['REQUEST_URI'] !== '' && str_contains( (string) $_SERVER['REQUEST_URI'], (string) $b2b_base_url ) ) {
 			return true;
 		}
 
-		return true;
+		if ( isset( $_GET['b2b'] ) && $_GET['b2b'] == 1 ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -129,6 +144,11 @@ class Module {
 		return null;
 	}
 
+	/**
+	 * Registers a role and sets up initialization if the role exists.
+	 *
+	 * @return void
+	 */
 	protected function register_role(): void {
 		$role_exists = get_option( 'nt_b2b_role_exists' );
 		if ( ! empty( $role_exists ) ) {
@@ -136,6 +156,13 @@ class Module {
 		}
 	}
 
+	/**
+	 * Initializes the "b2b_client" role by duplicating the capabilities of the existing "customer" role.
+	 * If the "customer" role exists, it creates the "b2b_client" role with the same capabilities
+	 * and sets an option to indicate the role's existence.
+	 *
+	 * @return void
+	 */
 	public function init_role(): void {
 		$customer = get_role( 'customer' );
 		if ( null !== $customer ) {

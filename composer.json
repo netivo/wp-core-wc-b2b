@@ -42,6 +42,9 @@
   "scripts": {
     "test": [
       "@php -d zend.enable_gc=0 vendor/bin/phpunit"
+    ],
+    "test-debug": [
+      "@php -d zend.enable_gc=0 vendor/bin/phpunit --debug"
     ]
   }
 }
