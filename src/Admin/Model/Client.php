@@ -2,6 +2,8 @@
 
 namespace Netivo\Module\WooCommerce\B2B\Admin\Model;
 
+use WP_User_Query;
+
 class Client {
 	public static function get_users( $type = 'b2b_client', $search = '', $per_page = 10, $page = 1, $orderby = '', $order = '', $custom = array() ): array {
 		$args = array(
