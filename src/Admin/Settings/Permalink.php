@@ -38,7 +38,6 @@ class Permalink {
 	 * @return void
 	 */
 	public function register_settings(): void {
-
 		// Add the field
 		add_settings_field(
 			'nt_b2b_base_url',
@@ -54,6 +53,11 @@ class Permalink {
 			'sanitize_callback' => 'sanitize_title',
 			'default'           => 'panel-b2b',
 		] );
+
+		if ( isset( $_POST['nt_b2b_base_url'] ) && isset( $_POST['_wpnonce'] ) && wp_verify_nonce( $_POST['_wpnonce'], 'update-permalink' ) ) {
+			update_option( 'nt_b2b_base_url', sanitize_title( $_POST['nt_b2b_base_url'] ) );
+			flush_rewrite_rules();
+		}
 	}
 
 	/**
@@ -65,7 +69,7 @@ class Permalink {
 	 * @return void
 	 */
 	public function render_slug_field(): void {
-		$value = get_option( 'nt_b2b_base_url', 'b2b-panel' );
-		echo '<input name="netivo_b2b_slug" type="text" class="regular-text code" value="' . esc_attr( $value ) . '" />';
+		$value = get_option( 'nt_b2b_base_url', 'panel-b2b' );
+		echo '<input name="nt_b2b_base_url" type="text" class="regular-text code" value="' . esc_attr( $value ) . '" />';
 	}
 }

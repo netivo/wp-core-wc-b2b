@@ -72,7 +72,7 @@ class Module {
 				return true;
 			}
 		}
-		if ( str_contains( $_SERVER['REQUEST_URI'], 'panel-b2b' ) ) {
+		if ( str_contains( $_SERVER['REQUEST_URI'], $b2b_base_url ) ) {
 			return true;
 		}
 		if ( array_key_exists( 'b2b', $_GET ) && $_GET['b2b'] == 1 ) {
