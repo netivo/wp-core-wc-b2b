@@ -77,14 +77,14 @@ class Form extends RestController {
 	 *     - 500 code if captcha validation fails or if required fields are missing.
 	 */
 	public function form_register( \WP_REST_Request $request ): array|\WP_Error {
-		$personal_name    = $request->get_param( 'personal_name' );
-		$personal_surname = $request->get_param( 'personal_surname' );
-		$company_name     = $request->get_param( 'company_name' );
-		$company_nip      = $request->get_param( 'company_nip' );
-		$email_address    = $request->get_param( 'email_address' );
-		$phone_number     = $request->get_param( 'phone_number' );
-		$message          = $request->get_param( 'message' );
-		$captcha          = $request->get_param( 'captcha' );
+		$personal_name    = sanitize_text_field( $request->get_param( 'personal_name' ) );
+		$personal_surname = sanitize_text_field( $request->get_param( 'personal_surname' ) );
+		$company_name     = sanitize_text_field( $request->get_param( 'company_name' ) );
+		$company_nip      = sanitize_text_field( $request->get_param( 'company_nip' ) );
+		$email_address    = sanitize_text_field( $request->get_param( 'email_address' ) );
+		$phone_number     = sanitize_text_field( $request->get_param( 'phone_number' ) );
+		$message          = sanitize_text_field( $request->get_param( 'message' ) );
+		$captcha          = sanitize_text_field( $request->get_param( 'captcha' ) );
 		if ( ! empty( $personal_name ) && ! empty( $personal_surname ) && ! empty( $company_name ) && ! empty( $company_nip ) &&
 		     ! empty( $email_address ) && ! empty( $phone_number ) && ! empty( $message ) ) {
 			if ( ! $this->validate_captcha( $captcha ) ) {
