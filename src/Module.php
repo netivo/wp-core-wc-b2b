@@ -97,6 +97,8 @@ class Module {
 		new RegisterFormBlock();
 		EntityManager::createTable( DiscountModel::class );
 
+		$this->register_role();
+
 		if ( is_admin() ) {
 			new Panel();
 		}
@@ -125,5 +127,21 @@ class Module {
 		}
 
 		return null;
+	}
+
+	protected function register_role(): void {
+		$role_exists = get_option( 'nt_b2b_role_exists' );
+		if ( ! empty( $role_exists ) ) {
+			add_action( 'init', array( $this, 'init_role' ) );
+		}
+	}
+
+	public function init_role(): void {
+		$customer = get_role( 'customer' );
+		if ( null !== $customer ) {
+			$capabilities = $customer->capabilities;
+			add_role( 'b2b_client', __( 'Klient B2B', 'netivo' ), $capabilities );
+			add_option( 'nt_b2b_role_exists', 1 );
+		}
 	}
 }
