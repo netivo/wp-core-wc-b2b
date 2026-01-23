@@ -3,6 +3,8 @@
 namespace Netivo\Module\WooCommerce\B2B\Admin\Controller;
 
 use Netivo\Module\WooCommerce\B2B\Admin\Table\Requests as RequestsTable;
+use WP_Error;
+use WP_User;
 
 class Requests {
     public static string $list_url = 'admin.php?page=requests';
