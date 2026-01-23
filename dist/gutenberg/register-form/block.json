@@ -15,5 +15,6 @@
   },
   "textdomain": "netivo",
   "editorScript": "file:./block.js",
-  "style": "file:./register-form.min.css"
+  "style": "file:./register-form.min.css",
+  "viewScript": "file:./register-form.js"
 }
