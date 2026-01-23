@@ -38,7 +38,7 @@ class Clients {
 
             <form method="get">
                 <input type="hidden" name="page" value="customers">
-                <?php $this->list_table->search_box( __( 'Szukaj klienta', 'netivo' ), 'user' ); ?>
+                <?php $this->list_table->search_box( __( 'Szukaj klienta', 'netivo' ), 'client' ); ?>
 
                 <?php $this->list_table->display(); ?>
 

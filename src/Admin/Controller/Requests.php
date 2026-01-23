@@ -39,7 +39,7 @@ class Requests {
 
             <form method="get">
                 <input type="hidden" name="page" value="customers">
-                <?php $this->list_table->search_box( __( 'Szukaj zgłoszenia', 'netivo' ), 'user' ); ?>
+                <?php $this->list_table->search_box( __( 'Szukaj zgłoszenia', 'netivo' ), 'request' ); ?>
 
                 <?php $this->list_table->display(); ?>
 
