@@ -1,11 +1,11 @@
 {
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
-  "name": "netivo/contact-form",
-  "title": "Contact Form",
+  "name": "netivo/register-form",
+  "title": "Register Form",
   "category": "netivo-blocks",
   "icon": "block-default",
-  "description": "Adds contact form to page",
+  "description": "Adds b2b register form to page",
   "keywords": [],
   "attributes": {
     "consent_text": {
