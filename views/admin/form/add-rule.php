@@ -5,7 +5,7 @@
  * Date: 30.01.2026
  * Time: 15:25
  *
- * @var $categories WP_Term[]
+ * @var $categories WP_Term_Query
  * @var $form_action string
  *
  */
@@ -33,8 +33,9 @@ if ( ! defined( 'ABSPATH' ) ) {
                     data-placeholder="<?php echo esc_attr__( 'Szukaj kategorii ...', 'netivo' ); ?>"
                     data-action="woocommerce_json_search_product_categories"
             >
-				<?php foreach ( $categories as $category ) { ?>
-                    <option value="<?php echo esc_attr( $category->term_id ); ?>"><?php echo esc_attr( $category->name ); ?></option>';
+				<?php foreach ( $categories->get_terms() as $category ) { ?>
+                    <option value="<?php echo esc_attr( $category->term_id ); ?>"><?php echo esc_attr( $category->name );
+						?></option>';
 				<?php } ?>
             </select>
         </div>
