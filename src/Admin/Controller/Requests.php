@@ -119,6 +119,9 @@ class Requests {
         $res = Module::user_controller()->promote_user( $user );
 
         if ( $res ) {
+
+            do_action( 'nt_b2b_request_accept', $user );
+
             Notice::add( __( 'Użytkownik został zaakceptowany.', 'netivo' ), 'success' );
             wp_safe_redirect( admin_url( self::$list_url ) ); //@todo przekierowanie na reguły użytkownika
             exit;
@@ -164,6 +167,9 @@ class Requests {
                 $res = Module::user_controller()->deny_user( $user, $message );
 
                 if ( $res ) {
+
+                    do_action( 'nt_b2b_request_denied', $user, $message );
+
                     Notice::add( __( 'Zgłoszenie zostało odrzucone.', 'netivo' ), 'success' );
                     wp_safe_redirect( admin_url( self::$list_url ) );
                     exit;

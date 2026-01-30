@@ -9,6 +9,8 @@
 
 namespace Netivo\Module\WooCommerce\B2B;
 
+use Netivo\Module\WooCommerce\B2B\Woocommerce\Email\RequestAccepted;
+use Netivo\Module\WooCommerce\B2B\Woocommerce\Email\RequestDenied;
 use Netivo\Module\WooCommerce\B2B\Woocommerce\Email\RequestSent;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -25,13 +27,17 @@ class Emails {
 	}
 
 	public function custom_emails( $emails ) {
-		$emails['WC_Email_Customer_B2B_Request_Sent'] = new RequestSent();
+		$emails['WC_Email_Customer_B2B_Request_Sent']     = new RequestSent();
+		$emails['WC_Email_Customer_B2B_Request_Accepted'] = new RequestAccepted();
+		$emails['WC_Email_Customer_B2B_Request_Denied']   = new RequestDenied();
 
 		return $emails;
 	}
 
 	public function my_email_actions( $actions ) {
 		$actions[] = 'nt_b2b_request_sent';
+		$actions[] = 'nt_b2b_request_accepted';
+		$actions[] = 'nt_b2b_request_denied';
 
 		return $actions;
 	}
