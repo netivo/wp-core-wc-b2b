@@ -142,6 +142,7 @@ class User {
 		}
 
 		update_user_meta( $user->ID, 'subscribe_to_b2b', - 1 );
+		update_user_meta( $user->ID, 'b2b_deny_reason', $reason );
 
 		return true;
 	}

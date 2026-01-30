@@ -157,22 +157,23 @@ class Requests {
 
         $denied_user = $user;
 
-        if ( ! empty( $_POST['confirm'] ) & ! empty( $_POST['message'] ) ) {
+        if ( ! empty( $_POST['confirm'] ) ) {
+            if ( ! empty( $_POST['message'] ) ) {
+                $message = sanitize_text_field( $_POST['message'] );
 
-            $message = sanitize_text_field( $_POST['message'] );
+                $res = Module::user_controller()->deny_user( $user, $message );
 
-            $res = Module::user_controller()->deny_user( $user, $message );
+                if ( $res ) {
+                    Notice::add( __( 'Zgłoszenie zostało odrzucone.', 'netivo' ), 'success' );
+                    wp_safe_redirect( admin_url( self::$list_url ) );
+                    exit;
+                }
 
-            if ( $res ) {
-                Notice::add( __( 'Zgłoszenie zostało odrzucone.', 'netivo' ), 'success' );
+                Notice::add( __( 'Wystąpił błąd podczas odrzucania zgłoszenia.', 'netivo' ), 'error' );
                 wp_safe_redirect( admin_url( self::$list_url ) );
                 exit;
             }
-
-            Notice::add( __( 'Wystąpił błąd podczas odrzucania zgłoszenia.', 'netivo' ), 'error' );
-            wp_safe_redirect( admin_url( self::$list_url ) );
-            exit;
-
+            Notice::add( __( 'Musisz podać powód odrzucenia.', 'netivo' ), 'error' );
         }
 
     }
@@ -197,6 +198,7 @@ class Requests {
                         $denied_user->user_email ); ?>
             </h1>
             <hr class="wp-header-end">
+            <?php Notice::display_notices(); ?>
             <form action="<?php echo esc_url( $deny_url ); ?>" method="post">
                 <table class="form-table" role="presentation">
                     <tr class="user-description-wrap">
