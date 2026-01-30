@@ -18,11 +18,16 @@
     {
       "type": "vcs",
       "url": "git@github.com:netivo/wp-core.git"
+    },
+    {
+      "type": "vcs",
+      "url": "git@github.com:netivo/wp-core-woocommerce.git"
     }
   ],
   "require": {
     "php": ">=8.2",
     "netivo/wp-core": "^1.1",
+    "netivo/woocommerce": "^1.0",
     "ext-curl": "*"
   },
   "require-dev": {

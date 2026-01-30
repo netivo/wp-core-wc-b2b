@@ -102,11 +102,16 @@ class Form extends RestController {
 
 			if ( Module::user_controller()->user_exists( $email_address ) ) {
 				Module::user_controller()->update_user( $user_data, $message );
+				$user_exists = true;
 				$add_message = __( 'Do tego czasu możesz korzystać ze swojego konta jak dotychczas.', 'netivo' );
 			} else {
 				Module::user_controller()->register_user( $user_data, $message );
+				$user_exists = false;
 				$add_message = __( 'Na wskazany adres email dostałeś wiadomość ustawienia hasła. Do czasu akceptacji konta możesz używać jak zwyczajny użytkownik.', 'netivo' );
 			}
+
+			$user_data['message'] = $message;
+			do_action( 'nt_b2b_request_sent', $email_address, $user_data, $user_exists );
 
 			return [
 				'status'  => 'success',
