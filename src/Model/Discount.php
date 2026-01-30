@@ -207,7 +207,7 @@ class Discount extends Entity {
 		return null;
 	}
 
-	public static function get_discounts_for_user( int|string $user_id, string $type = 'category' ): array {
+	public static function get_discounts_for_user( int|string $user_id, string $type = 'category', $return = 'array' ): array {
 		$em = EntityManager::get( self::class );
 
 		try {
@@ -218,15 +218,20 @@ class Discount extends Entity {
 
 			$result = array();
 
+
 			if ( ! empty( $discounts ) ) {
 				foreach ( $discounts as $discount ) {
-					$result[] = [
-						'id'         => $discount->get_id(),
-						'type'       => $discount->get_type(),
-						'name'       => $discount->get_element_name(),
-						'price_type' => $discount->get_price_type(),
-						'value'      => $discount->get_value(),
-					];
+					if ( $return === 'array' ) {
+						$result[] = [
+							'id'         => $discount->get_id(),
+							'type'       => $discount->get_type(),
+							'name'       => $discount->get_element_name(),
+							'price_type' => $discount->get_price_type(),
+							'value'      => $discount->get_value(),
+						];
+					} elseif ( $return === 'ids' ) {
+						$result[] = $discount->get_type_id();
+					}
 				}
 			}
 

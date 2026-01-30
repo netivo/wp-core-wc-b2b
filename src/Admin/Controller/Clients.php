@@ -7,6 +7,7 @@ use Netivo\Module\WooCommerce\B2B\Admin\Table\Clients as ClientsTable;
 use Netivo\Module\WooCommerce\B2B\Model\Discount;
 use Netivo\Module\WooCommerce\B2B\Module;
 use WP_Error;
+use WP_Term_Query;
 use WP_User;
 
 class Clients {
@@ -96,18 +97,45 @@ class Clients {
                 <?php echo sprintf( esc_html__( 'Reguły cenowe B2B - użytkownik %s (%s)', 'netivo' ), $user_company, $user_nip ); ?>
             </h1>
             <hr class="wp-header-end">
+            <div id="col-container" class="wp-clearfix">
+                <div id="col-left">
+                    <div class="col-wrap">
+                        <h2><?php echo esc_html__( 'Reguły kategorii' ); ?></h2>
+                        <?php $this->print_rules_list( $category_rules ); ?>
 
-            <h2><?php echo esc_html__( 'Reguły kategorii' ); ?></h2>
-            <?php $this->print_rules_list( $category_rules ); ?>
-
-            <h2><?php echo esc_html__( 'Reguły produktowe' ); ?></h2>
-            <?php $this->print_rules_list( $product_rules ); ?>
+                        <h2><?php echo esc_html__( 'Reguły produktowe' ); ?></h2>
+                        <?php $this->print_rules_list( $product_rules ); ?>
+                    </div>
+                </div>
+                <div id="col-right">
+                    <div class="col-wrap">
+                        <h2><?php echo esc_html__( 'Dodaj regułę' ); ?></h2>
+                        <?php $this->print_add_rule_form(); ?>
+                    </div>
+                </div>
+            </div>
 
         </div>
         <?php
     }
 
-    protected function print_rules_list( $rules ) {
+    protected function print_add_rule_form(): void {
+        global $b2b_user;
+        $categories = new WP_Term_Query( array(
+                'taxonomy'   => 'product_cat',
+                'hide_empty' => false,
+                'exclude'    => Discount::get_discounts_for_user( $b2b_user->ID, 'category', 'ids' )
+        ) );
+
+        $form_action = admin_url( self::$rules_url );
+        $form_action = add_query_arg( array( 'user' => $b2b_user->ID ), $form_action );
+
+        if ( file_exists( Module::get_module_path() . '/views/admin/form/add-rule.php' ) ) {
+            include Module::get_module_path() . '/views/admin/form/add-rule.php';
+        }
+    }
+
+    protected function print_rules_list( $rules ): void {
         ?>
         <table class="wp-list-table widefat fixed striped table-view-list users" style="margin-bottom: 2rem">
             <thead>
@@ -115,7 +143,6 @@ class Clients {
                 <th>Nazwa elementu</th>
                 <th>Rabat</th>
                 <th>Akcja</th>
-                <th></th>
             </tr>
             </thead>
             <tbody>
