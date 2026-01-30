@@ -10,8 +10,8 @@
  *
  */
 if ( ! defined( 'ABSPATH' ) ) {
-	header( 'HTTP/1.0 403 Forbidden' );
-	exit;
+    header( 'HTTP/1.0 403 Forbidden' );
+    exit;
 }
 
 ?>
@@ -32,11 +32,12 @@ if ( ! defined( 'ABSPATH' ) ) {
                     name="category"
                     data-placeholder="<?php echo esc_attr__( 'Szukaj kategorii ...', 'netivo' ); ?>"
                     data-action="woocommerce_json_search_product_categories"
+                    style="width: 100%;"
             >
-				<?php foreach ( $categories->get_terms() as $category ) { ?>
+                <?php foreach ( $categories->get_terms() as $category ) { ?>
                     <option value="<?php echo esc_attr( $category->term_id ); ?>"><?php echo esc_attr( $category->name );
-						?></option>';
-				<?php } ?>
+                        ?></option>';
+                <?php } ?>
             </select>
         </div>
         <div class="form-field" data-element="product-select">
@@ -47,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                     name="product"
                     data-placeholder="<?php echo esc_attr__( 'Szukaj produktu ...', 'netivo' ); ?>"
                     data-action="woocommerce_json_search_products_and_variations"
-                    style="width: 50%;"
+                    style="width: 100%;"
             >
             </select>
         </div>
@@ -65,7 +66,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <p id="value-description"><?php echo esc_html__( 'Podaj wartość rabatu bez podawania jednostki', 'netivo' ); ?></p>
         </div>
         <p class="submit">
-			<?php submit_button( __( 'Dodaj regułę', 'netivo' ), 'primary', 'add-b2b-rule', false ); ?>
+            <?php submit_button( __( 'Dodaj regułę', 'netivo' ), 'primary', 'add-b2b-rule', false ); ?>
         </p>
     </form>
 </div>
