@@ -71,7 +71,7 @@ class RequestSent extends \WC_Email {
 	 * @since  3.1.0
 	 */
 	public function get_default_heading(): string {
-		return __( 'Twoje zgłoszenie', 'netivo' );
+		return __( 'Zgłoszenie przyjęte', 'netivo' );
 	}
 
 	/**
