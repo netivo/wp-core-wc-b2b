@@ -12,6 +12,7 @@ namespace Netivo\Module\WooCommerce\B2B\Model;
 use Netivo\Core\Database\Entity;
 use Netivo\Core\Database\EntityManager;
 use WC_Product;
+use WP_Term;
 use WP_User;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -64,6 +65,8 @@ class Discount extends Entity {
 
 	private ?WP_User $user = null;
 
+	private WC_Product|WP_Term|null $element = null;
+
 	/**
 	 * Dynamically sets the value of a class property if it exists.
 	 * Additionally, performs specific actions based on the property name and state.
@@ -114,6 +117,25 @@ class Discount extends Entity {
 	 */
 	public function get_type_id(): int {
 		return $this->type_id;
+	}
+
+	public function get_element_name(): string {
+		if ( empty( $this->element ) ) {
+			if ( $this->type === 'product' ) {
+				$this->element = wc_get_product( $this->type_id );
+			} elseif ( $this->type === 'category' ) {
+				$this->element = get_term( $this->type_id, 'product_cat' );
+			}
+		}
+		if ( ! empty( $this->element ) ) {
+			if ( $this->type === 'product' ) {
+				return $this->element->get_name();
+			} else {
+				return $this->element->name;
+			}
+		}
+
+		return '';
 	}
 
 	/**
@@ -183,6 +205,36 @@ class Discount extends Entity {
 		}
 
 		return null;
+	}
+
+	public static function get_discounts_for_user( int|string $user_id, string $type = 'category' ): array {
+		$em = EntityManager::get( self::class );
+
+		try {
+			$discounts = $em->findAll( [
+				'user_id' => [ 'type' => '%s', 'value' => $user_id ],
+				'type'    => [ 'type' => '%s', 'value' => $type ],
+			] );
+
+			$result = array();
+
+			if ( ! empty( $discounts ) ) {
+				foreach ( $discounts as $discount ) {
+					$result[] = [
+						'id'         => $discount->get_id(),
+						'type'       => $discount->get_type(),
+						'name'       => $discount->get_element_name(),
+						'price_type' => $discount->get_price_type(),
+						'value'      => $discount->get_value(),
+					];
+				}
+			}
+
+			return $result;
+
+		} catch ( \ReflectionException $e ) {
+			return [];
+		}
 	}
 
 }

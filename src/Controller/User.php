@@ -198,4 +198,24 @@ class User {
 
 		return true;
 	}
+
+	public function is_user_b2b_client( mixed $user ) {
+		if ( empty( $user ) ) {
+			return false;
+		}
+
+		if ( ! is_a( $user, WP_User::class ) ) {
+			if ( is_string( $user ) ) {
+				$user = get_user_by( 'email', $user );
+			} elseif ( is_int( $user ) ) {
+				$user = get_user_by( 'id', $user );
+			}
+		}
+
+		if ( in_array( 'b2b_client', $user->roles ) ) {
+			return true;
+		}
+
+		return false;
+	}
 }
