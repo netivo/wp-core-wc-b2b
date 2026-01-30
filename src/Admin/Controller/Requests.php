@@ -2,6 +2,7 @@
 
 namespace Netivo\Module\WooCommerce\B2B\Admin\Controller;
 
+use Netivo\Module\WooCommerce\B2B\Admin\Notice;
 use Netivo\Module\WooCommerce\B2B\Admin\Table\Requests as RequestsTable;
 use WP_Error;
 use WP_User;
@@ -23,6 +24,8 @@ class Requests {
     public function list_users(): void {
         $this->list_table = new RequestsTable();
         switch ( $this->list_table->current_action() ) {
+            case 'accept':
+                $this->handle_accept();
             default:
                 $this->show_table();
         }
@@ -35,6 +38,8 @@ class Requests {
             <h1 class="wp-heading-inline"><?php esc_html_e( 'Zgłoszenia B2B', 'netivo' ); ?></h1>
             <hr class="wp-header-end">
 
+            <?php Notice::display_notices(); ?>
+
             <?php $this->list_table->views(); ?>
 
             <form method="get">
@@ -46,5 +51,13 @@ class Requests {
             </form>
         </div>
         <?php
+    }
+
+    public function handle_accept(): void {
+        if ( empty( $_GET['user'] ) ) {
+            Notice::add( __( 'Select user to accept.', 'netivo' ), 'error' );
+            wp_safe_redirect( admin_url( self::$list_url ) );
+            exit;
+        }
     }
 }
