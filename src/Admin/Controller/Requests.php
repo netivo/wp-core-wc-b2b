@@ -140,6 +140,7 @@ class Requests {
      * @return void
      */
     public function handle_deny(): void {
+        global $denied_user;
         check_admin_referer( 'deny-request' );
 
         if ( empty( $_GET['user'] ) ) {
@@ -153,6 +154,8 @@ class Requests {
             wp_safe_redirect( admin_url( self::$list_url ) );
             exit;
         }
+
+        $denied_user = $user;
 
         if ( ! empty( $_POST['confirm'] ) & ! empty( $_POST['message'] ) ) {
 
@@ -184,12 +187,14 @@ class Requests {
      * @return void
      */
     public function show_deny_form(): void {
+        global $denied_user;
         $deny_url = admin_url( RequestsController::$deny_url );
         $deny_url = add_query_arg( array( 'user' => $_GET['user'] ), $deny_url );
         ?>
         <div class="wrap">
             <h1 class="wp-heading-inline">
-                <?php esc_html_e( 'Zgłoszenia B2B - odrzucanie użytkownika', 'netivo' ); ?>
+                <?php echo sprintf( esc_html__( 'Zgłoszenia B2B - odrzucanie użytkownika %s', 'netivo' ),
+                        $denied_user->user_email ); ?>
             </h1>
             <hr class="wp-header-end">
             <form action="<?php echo esc_url( $deny_url ); ?>" method="post">
