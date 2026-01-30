@@ -7,8 +7,8 @@ use WP_Error;
 use WP_User;
 
 class Clients {
-    public static string $list_url = 'admin.php?page=clients';
-    public static string $rules_url = 'admin.php?page=customers&action=rules';
+    public static string $list_url = 'admin.php?page=b2b-clients';
+    public static string $rules_url = 'admin.php?page=b2b-clients&action=rules';
     protected ClientsTable $list_table;
     protected array $messages = [];
     protected ?WP_Error $errors = null;

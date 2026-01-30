@@ -8,9 +8,9 @@ use WP_Error;
 use WP_User;
 
 class Requests {
-    public static string $list_url = 'admin.php?page=requests';
-    public static string $accept_url = 'admin.php?page=requests&action=accept';
-    public static string $deny_url = 'admin.php?page=requests&action=deny';
+    public static string $list_url = 'admin.php?page=b2b-requests';
+    public static string $accept_url = 'admin.php?page=b2b-requests&action=accept';
+    public static string $deny_url = 'admin.php?page=b2b-requests&action=deny';
     protected RequestsTable $list_table;
     protected array $messages = [];
     protected ?WP_Error $errors = null;
