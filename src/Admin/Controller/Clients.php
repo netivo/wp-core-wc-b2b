@@ -100,17 +100,17 @@ class Clients {
             <div id="col-container" class="wp-clearfix">
                 <div id="col-left">
                     <div class="col-wrap">
+                        <h2><?php echo esc_html__( 'Dodaj regułę' ); ?></h2>
+                        <?php $this->print_add_rule_form(); ?>
+                    </div>
+                </div>
+                <div id="col-right">
+                    <div class="col-wrap">
                         <h2><?php echo esc_html__( 'Reguły kategorii' ); ?></h2>
                         <?php $this->print_rules_list( $category_rules ); ?>
 
                         <h2><?php echo esc_html__( 'Reguły produktowe' ); ?></h2>
                         <?php $this->print_rules_list( $product_rules ); ?>
-                    </div>
-                </div>
-                <div id="col-right">
-                    <div class="col-wrap">
-                        <h2><?php echo esc_html__( 'Dodaj regułę' ); ?></h2>
-                        <?php $this->print_add_rule_form(); ?>
                     </div>
                 </div>
             </div>

@@ -30,5 +30,13 @@ class Panel {
 	public function __construct() {
 		new Permalink();
 		new Menu();
+
+
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+	}
+
+	public function enqueue_scripts(): void {
+		wp_enqueue_script( 'wc-enhanced-select' );
+		wp_enqueue_style( 'nt-select2', WC()->plugin_url() . '/assets/css/select2.css' );
 	}
 }

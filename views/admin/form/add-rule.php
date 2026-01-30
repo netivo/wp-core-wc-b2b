@@ -76,8 +76,8 @@ if ( ! defined( 'ABSPATH' ) ) {
     let categorySelect = form.querySelector( '[data-element="category-select"]' );
     let productSelect = form.querySelector( '[data-element="product-select"]' );
 
-    typeSelect.addEventListener( 'change', ( event ) => {
-      let type = event.target.value;
+    let showType = () => {
+      let type = typeSelect.value;
       categorySelect.style.display = 'none';
       productSelect.style.display = 'none';
       if ( type === 'category' ) {
@@ -86,6 +86,11 @@ if ( ! defined( 'ABSPATH' ) ) {
       else if ( type === 'product' ) {
         productSelect.style.display = 'block';
       }
+    };
+
+    showType();
+    typeSelect.addEventListener( 'change', ( event ) => {
+      showType();
     } );
   }
 </script>
