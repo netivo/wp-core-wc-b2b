@@ -97,10 +97,12 @@ class Requests extends WP_List_Table {
 
 	protected function column_company_name( $item ): string {
 		$company_name = get_user_meta( $item->ID, 'billing_company', true );
-		$accept_url   = admin_url( RequestsController::$accept_url . '&user=' . $item->ID );
-		$accept_url   = add_query_arg( array( 'user_id' => $item->ID ), $accept_url );
-		$deny_url     = admin_url( RequestsController::$deny_url . '&user=' . $item->ID );
-		$deny_url     = add_query_arg( array( 'user_id' => $item->ID ), $deny_url );
+		$accept_url   = admin_url( RequestsController::$accept_url );
+		$accept_url   = add_query_arg( array( 'user' => $item->ID ), $accept_url );
+		$accept_url   = wp_nonce_url( $accept_url, 'accept-request' );
+		$deny_url     = admin_url( RequestsController::$deny_url );
+		$deny_url     = add_query_arg( array( 'user' => $item->ID ), $deny_url );
+		$deny_url     = wp_nonce_url( $deny_url, 'deny-request' );
 
 		$actions = array(
 			'accept' => sprintf( '<a href="%s">Zaakceptuj</a>', esc_url( $accept_url ) ),

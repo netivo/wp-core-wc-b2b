@@ -116,6 +116,70 @@ class User {
 	}
 
 	/**
+	 * Denies a user by updating their subscription status to a restricted value.
+	 *
+	 * @param int|string|WP_User $user The user to deny. Accepts a user ID, email, or WP_User object.
+	 * @param string $reason The reason for denying the user.
+	 *
+	 * @return bool Returns true if the user was successfully updated, false if the user could not be resolved or updated.
+	 */
+	public function deny_user( int|string|WP_User $user, string $reason ): bool {
+
+		if ( empty( $user ) ) {
+			return false;
+		}
+
+		if ( ! is_a( $user, WP_User::class ) ) {
+			if ( is_string( $user ) ) {
+				$user = get_user_by( 'email', $user );
+			} elseif ( is_int( $user ) ) {
+				$user = get_user_by( 'id', $user );
+			}
+		}
+
+		if ( empty( $user ) ) {
+			return false;
+		}
+
+		update_user_meta( $user->ID, 'subscribe_to_b2b', - 1 );
+
+		return true;
+	}
+
+	/**
+	 * Promotes the given user to a "b2b_client" role and updates their metadata.
+	 *
+	 * @param int|string|WP_User $user The user to promote, which can be specified by user ID, email address, or as a WP_User object.
+	 *
+	 * @return bool Returns true if the user was successfully promoted, false otherwise.
+	 */
+	public function promote_user( int|string|WP_User $user ): bool {
+
+		if ( empty( $user ) ) {
+			return false;
+		}
+
+		if ( ! is_a( $user, WP_User::class ) ) {
+			if ( is_string( $user ) ) {
+				$user = get_user_by( 'email', $user );
+			} elseif ( is_int( $user ) ) {
+				$user = get_user_by( 'id', $user );
+			}
+		}
+
+
+		if ( ! $this->can_user_be_promoted( $user ) ) {
+			return false;
+		}
+
+		$user->set_role( 'b2b_client' );
+		update_user_meta( $user->ID, 'subscribe_to_b2b', 2 );
+
+
+		return true;
+	}
+
+	/**
 	 * Determines if a user is eligible for promotion based on their roles.
 	 *
 	 * @param mixed $user The user object or email address to evaluate for promotion eligibility.
@@ -123,7 +187,6 @@ class User {
 	 * @return bool Returns true if the user can be promoted, false otherwise.
 	 */
 	public function can_user_be_promoted( mixed $user ): bool {
-		global $b2bUsers;
 		if ( ! is_a( $user, WP_User::class ) ) {
 			$user = get_user_by( 'email', $user );
 		}
