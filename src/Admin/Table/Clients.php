@@ -9,6 +9,7 @@
 
 namespace Netivo\Module\WooCommerce\B2B\Admin\Table;
 
+use Netivo\Module\WooCommerce\B2B\Admin\Controller\Clients as ClientsController;
 use Netivo\Module\WooCommerce\B2B\Admin\Model\Client;
 use WP_List_Table;
 
@@ -94,11 +95,14 @@ class Clients extends WP_List_Table {
 	protected function column_company_name( $item ): string {
 		$company_name = get_user_meta( $item->ID, 'billing_company', true );
 
+		$rules_url = admin_url( ClientsController::$rules_url );
+		$rules_url = add_query_arg( array( 'user' => $item->ID ), $rules_url );
+
 		$actions = array(
-			'rules' => sprintf( '<a href="%s">Reguły cenowe</a>', esc_url( admin_url() ) )
+			'rules' => sprintf( '<a href="%s">Reguły cenowe</a>', esc_url( $rules_url ) )
 		);
 
-		return sprintf( '<strong><a href="%s">%s</a></strong>%s', esc_url( admin_url() ), esc_html( $company_name ), $this->row_actions( $actions ) );
+		return sprintf( '<strong><a href="%s">%s</a></strong>%s', esc_url( $rules_url ), esc_html( $company_name ), $this->row_actions( $actions ) );
 	}
 
 	protected function column_nip( $item ): string {
