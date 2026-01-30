@@ -18,14 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="form-wrap">
     <form method="post" action="<?php echo esc_url( $form_action ); ?>" class="validate js-add-rule-form">
         <div class="form-field form-required">
-            <label for="type"><?php esc_html__( 'Rodzaj elementu', 'netivo' ) ?></label>
+            <label for="type"><?php echo esc_html__( 'Rodzaj elementu', 'netivo' ) ?></label>
             <select name="type" id="type" data-element="type-select" required aria-required="true">
-                <option value="product"><?php esc_html__( 'Produkt', 'netivo' ) ?></option>
-                <option value="category"><?php esc_html__( 'Kategoria', 'netivo' ) ?></option>
+                <option value="product"><?php echo esc_html__( 'Produkt', 'netivo' ) ?></option>
+                <option value="category"><?php echo esc_html__( 'Kategoria', 'netivo' ) ?></option>
             </select>
         </div>
         <div class="form-field" data-element="category-select">
-            <label for="category"><?php esc_html__( 'Kategoria', 'netivo' ); ?></label>
+            <label for="category"><?php echo esc_html__( 'Kategoria', 'netivo' ); ?></label>
             <select
                     id="category"
                     class="wc-category-search"
@@ -40,7 +40,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             </select>
         </div>
         <div class="form-field" data-element="product-select">
-            <label for="product"><?php esc_html__( 'Produkt', 'netivo' ); ?></label>
+            <label for="product"><?php echo esc_html__( 'Produkt', 'netivo' ); ?></label>
             <select
                     id="product"
                     class="wc-product-search"
@@ -52,14 +52,14 @@ if ( ! defined( 'ABSPATH' ) ) {
             </select>
         </div>
         <div class="form-field form-required">
-            <label for="type"><?php esc_html__( 'Typ rabatu', 'netivo' ) ?></label>
+            <label for="type"><?php echo esc_html__( 'Typ rabatu', 'netivo' ) ?></label>
             <select name="type" id="type" data-element="type-select" required aria-required="true">
-                <option value="percent"><?php esc_html__( 'Procentowy', 'netivo' ) ?></option>
-                <option value="price"><?php esc_html__( 'Kwotowy', 'netivo' ) ?></option>
+                <option value="percent"><?php echo esc_html__( 'Procentowy', 'netivo' ) ?></option>
+                <option value="price"><?php echo esc_html__( 'Kwotowy', 'netivo' ) ?></option>
             </select>
         </div>
         <div class="form-field form-required">
-            <label for="value"><?php esc_html__( 'Wartość rabatu', 'netivo' ); ?></label>
+            <label for="value"><?php echo esc_html__( 'Wartość rabatu', 'netivo' ); ?></label>
             <input name="value" id="value" type="number" value="" aria-required="true" required
                    aria-describedby="value-description"/>
             <p id="value-description"><?php echo esc_html__( 'Podaj wartość rabatu bez podawania jednostki', 'netivo' ); ?></p>
