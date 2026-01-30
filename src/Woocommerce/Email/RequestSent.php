@@ -17,6 +17,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class RequestSent extends \WC_Email {
+
+	protected array $form_data = array();
+
+	protected bool $new_user = false;
+
 	public function __construct() {
 
 		$this->id             = 'request_sent';
@@ -28,10 +33,6 @@ class RequestSent extends \WC_Email {
 		$this->placeholders   = array(
 			'{site_title}' => $this->get_blogname(),
 		);
-
-		$this->form_data = array();
-		$this->new_user  = false;
-
 
 		add_action( 'nt_b2b_request_sent', array( $this, 'trigger' ), 10, 3 );
 

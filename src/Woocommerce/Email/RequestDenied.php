@@ -10,6 +10,7 @@
 namespace Netivo\Module\WooCommerce\B2B\Woocommerce\Email;
 
 use Netivo\Module\WooCommerce\B2B\Module;
+use WP_User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
@@ -17,6 +18,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class RequestDenied extends \WC_Email {
+
+	protected ?WP_User $user = null;
+
+	protected string $reason;
+
 	public function __construct() {
 
 		$this->id             = 'request_denied';
@@ -29,9 +35,6 @@ class RequestDenied extends \WC_Email {
 			'{site_title}' => $this->get_blogname(),
 		);
 
-		$this->user   = null;
-		$this->reason = '';
-
 
 		add_action( 'nt_b2b_request_denied', array( $this, 'trigger' ), 10, 2 );
 
@@ -41,6 +44,12 @@ class RequestDenied extends \WC_Email {
 
 	function trigger( $user, $reason ): void {
 		$this->setup_locale();
+
+		if ( ! empty( $user ) ) {
+			if ( ! is_a( $user, WP_User::class ) ) {
+				$user = get_user_by( 'id', $user );
+			}
+		}
 
 		$this->recipient = $user->user_email;
 		$this->user      = $user;
