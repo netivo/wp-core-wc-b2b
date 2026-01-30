@@ -111,6 +111,7 @@ class Module {
 		new Rewrite();
 		new RegisterFormBlock();
 		EntityManager::createTable( DiscountModel::class );
+		new Emails();
 
 		$this->register_role();
 
