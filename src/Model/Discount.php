@@ -99,6 +99,17 @@ class Discount extends Entity {
 	}
 
 	/**
+	 * @param int $id
+	 *
+	 * @return Discount
+	 */
+	public function set_id( int $id ): Discount {
+		$this->id = $id;
+
+		return $this;
+	}
+
+	/**
 	 * @return int
 	 */
 	public function get_user_id(): int {
