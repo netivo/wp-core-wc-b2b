@@ -44,6 +44,8 @@ class Clients {
             <h1 class="wp-heading-inline"><?php esc_html_e( 'Klienci B2B', 'netivo' ); ?></h1>
             <hr class="wp-header-end">
 
+            <?php Notice::display_notices(); ?>
+
             <?php $this->list_table->views(); ?>
 
             <form method="get">
@@ -134,6 +136,9 @@ class Clients {
                 <?php echo sprintf( esc_html__( 'Reguły cenowe B2B - użytkownik %s (%s)', 'netivo' ), $user_company, $user_nip ); ?>
             </h1>
             <hr class="wp-header-end">
+
+            <?php Notice::display_notices(); ?>
+            
             <div id="col-container" class="wp-clearfix">
                 <div id="col-left">
                     <div class="col-wrap">
