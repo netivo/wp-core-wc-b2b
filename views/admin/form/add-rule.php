@@ -31,13 +31,10 @@ if ( ! defined( 'ABSPATH' ) ) {
                     class="wc-category-search"
                     name="category"
                     data-placeholder="<?php echo esc_attr__( 'Szukaj kategorii ...', 'netivo' ); ?>"
+                    data-return_id="1"
                     data-action="woocommerce_json_search_product_categories"
                     style="width: 100%;"
             >
-                <?php foreach ( $categories->get_terms() as $category ) { ?>
-                    <option value="<?php echo esc_attr( $category->term_id ); ?>"><?php echo esc_attr( $category->name );
-                        ?></option>';
-                <?php } ?>
             </select>
         </div>
         <div class="form-field" data-element="product-select">
