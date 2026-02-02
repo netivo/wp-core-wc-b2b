@@ -14,6 +14,7 @@ use Netivo\Module\WooCommerce\B2B\Admin\Panel;
 use Netivo\Module\WooCommerce\B2B\Controller\User as UserController;
 use Netivo\Module\WooCommerce\B2B\Gutenberg\RegisterForm as RegisterFormBlock;
 use Netivo\Module\WooCommerce\B2B\Model\Discount as DiscountModel;
+use Netivo\Module\WooCommerce\B2B\Rest\Form;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
@@ -112,6 +113,8 @@ class Module {
 		new RegisterFormBlock();
 		EntityManager::createTable( DiscountModel::class );
 		new Emails();
+
+		new Form();
 
 		$this->register_role();
 
