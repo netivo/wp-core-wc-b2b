@@ -53,8 +53,8 @@ if ( ! defined( 'ABSPATH' ) ) {
             </select>
         </div>
         <div class="form-field form-required">
-            <label for="type"><?php echo esc_html__( 'Typ rabatu', 'netivo' ) ?></label>
-            <select name="type" id="type" data-element="type-select" required aria-required="true">
+            <label for="price_type"><?php echo esc_html__( 'Typ rabatu', 'netivo' ) ?></label>
+            <select name="price_type" id="type" data-element="type-select" required aria-required="true">
                 <option value="percent"><?php echo esc_html__( 'Procentowy', 'netivo' ) ?></option>
                 <option value="price"><?php echo esc_html__( 'Kwotowy', 'netivo' ) ?></option>
             </select>
@@ -66,7 +66,8 @@ if ( ! defined( 'ABSPATH' ) ) {
             <p id="value-description"><?php echo esc_html__( 'Podaj wartość rabatu bez podawania jednostki', 'netivo' ); ?></p>
         </div>
         <p class="submit">
-            <?php submit_button( __( 'Dodaj regułę', 'netivo' ), 'primary', 'add-b2b-rule', false ); ?>
+            <?php wp_nonce_field( 'add-b2b-rule' ); ?>
+            <?php submit_button( __( 'Dodaj regułę', 'netivo' ), 'primary', 'add-rule', false ); ?>
         </p>
     </form>
 </div>

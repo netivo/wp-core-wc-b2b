@@ -2,6 +2,8 @@
 
 namespace Netivo\Module\WooCommerce\B2B\Admin\Controller;
 
+use Netivo\Core\Database\EntityManager;
+use Netivo\Module\WooCommerce\B2B\Admin\Controller\Clients as ClientsController;
 use Netivo\Module\WooCommerce\B2B\Admin\Notice;
 use Netivo\Module\WooCommerce\B2B\Admin\Table\Clients as ClientsTable;
 use Netivo\Module\WooCommerce\B2B\Model\Discount;
@@ -80,6 +82,41 @@ class Clients {
 
         if ( ! empty( $_POST['add-rule'] ) ) {
             check_admin_referer( 'add-b2b-rule' );
+
+            if ( empty( $_POST['type'] ) || empty( $_POST['price_type'] ) || empty( $_POST['value'] ) ) {
+                Notice::add( __( 'Wypełnij wszystkie pola.', 'netivo' ), 'error' );
+            } else {
+
+                $type       = sanitize_text_field( $_POST['type'] );
+                $price_type = sanitize_text_field( $_POST['price_type'] );
+                $value      = sanitize_text_field( $_POST['value'] );
+
+                if ( empty( $_POST[ $type ] ) ) {
+                    Notice::add( __( 'Wybierz produkt lub kategorię do nadania rabatu', 'netivo' ) );
+                } else {
+                    $object_id = sanitize_text_field( $_POST[ $type ] );
+
+                    $discount             = new Discount();
+                    $discount->type       = $type;
+                    $discount->price_type = $price_type;
+                    $discount->value      = $value;
+                    $discount->user_id    = $b2b_user->ID;
+                    $discount->type_id    = $object_id;
+
+                    try {
+                        EntityManager::save( $discount );
+
+                        Notice::add( __( 'Reguła została dodana.', 'netivo' ), 'success' );
+                    } catch ( \Exception $e ) {
+                        Notice::add( __( 'Nnie udało się nadać rabatu', 'netivo' ) );
+                    }
+                    $rules_url = admin_url( self::$rules_url );
+                    $rules_url = add_query_arg( array( 'user' => $b2b_user->ID ), $rules_url );
+                    wp_safe_redirect( esc_url( $rules_url ) );
+                    exit;
+                }
+            }
+
         }
     }
 
