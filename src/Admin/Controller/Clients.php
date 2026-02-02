@@ -103,7 +103,7 @@ class Clients {
                     $discount->price_type = $price_type;
                     $discount->value      = $value;
                     $discount->user_id    = $b2b_user->ID;
-                    $discount->type_id    = $object_id;
+                    $discount->type_id    = (int) $object_id;
 
                     try {
                         EntityManager::save( $discount );
@@ -138,7 +138,7 @@ class Clients {
             <hr class="wp-header-end">
 
             <?php Notice::display_notices(); ?>
-            
+
             <div id="col-container" class="wp-clearfix">
                 <div id="col-left">
                     <div class="col-wrap">
