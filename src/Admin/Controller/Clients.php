@@ -15,6 +15,7 @@ use WP_User;
 class Clients {
     public static string $list_url = 'admin.php?page=b2b-clients';
     public static string $rules_url = 'admin.php?page=b2b-clients&action=rules';
+    public static string $delete_url = 'admin.php?page=b2b-clients&action=delete-rule';
     protected ClientsTable $list_table;
     protected array $messages = [];
     protected ?WP_Error $errors = null;
@@ -31,6 +32,9 @@ class Clients {
             case 'rules':
                 $this->handle_rule_add();
                 $this->show_rules();
+                break;
+            case 'delete-rule':
+                $this->handle_rule_delete();
                 break;
             default:
                 $this->show_table();
@@ -110,16 +114,58 @@ class Clients {
 
                         Notice::add( __( 'Reguła została dodana.', 'netivo' ), 'success' );
                     } catch ( \Exception $e ) {
-                        Notice::add( __( 'Nnie udało się nadać rabatu', 'netivo' ) );
+                        Notice::add( __( 'Nie udało się nadać rabatu', 'netivo' ) );
                     }
                     $rules_url = admin_url( self::$rules_url );
                     $rules_url = add_query_arg( array( 'user' => $b2b_user->ID ), $rules_url );
-                    wp_safe_redirect( esc_url( $rules_url ) );
+                    wp_safe_redirect( $rules_url );
                     exit;
                 }
             }
 
         }
+    }
+
+    public function handle_rule_delete(): void {
+        if ( empty( $_GET['user'] ) ) {
+            Notice::add( __( 'Wybierz użytkownika do edycji reguł.', 'netivo' ), 'error' );
+            wp_safe_redirect( admin_url( self::$list_url ) );
+            exit;
+        }
+        $user = get_user_by( 'id', sanitize_text_field( $_GET['user'] ) );
+        if ( empty( $user ) ) {
+            Notice::add( __( 'Użytkownik o podanym ID nie istnieje.', 'netivo' ), 'error' );
+            wp_safe_redirect( admin_url( self::$list_url ) );
+            exit;
+        }
+        $rules_url = admin_url( self::$rules_url );
+        $rules_url = add_query_arg( array( 'user' => $user->ID ), $rules_url );
+        if ( empty( $_GET['rule'] ) ) {
+            Notice::add( __( 'Wybierz regułę do usunięcia', 'netivo' ), 'error' );
+            wp_safe_redirect( $rules_url );
+            exit;
+        }
+
+        $em       = EntityManager::get( Discount::class );
+        $discount = $em->find_one( sanitize_text_field( $_GET['rule'] ) );
+        if ( empty( $discount ) ) {
+            Notice::add( __( 'Reguła o podanym ID nie istnieje', 'netivo' ), 'error' );
+            wp_safe_redirect( $rules_url );
+            exit;
+        }
+
+        $res = EntityManager::delete( $discount );
+
+        if ( ! empty( $res ) ) {
+            Notice::add( __( 'Reguła została usunięta', 'netivo' ), 'success' );
+            wp_safe_redirect( $rules_url );
+            exit;
+        }
+
+        Notice::add( __( 'Nie udało się usunąć reguły', 'netivo' ), 'error' );
+        wp_safe_redirect( $rules_url );
+        exit;
+
     }
 
     public function show_rules(): void {
@@ -178,6 +224,7 @@ class Clients {
     }
 
     protected function print_rules_list( $rules ): void {
+        global $b2b_user;
         ?>
         <table class="wp-list-table widefat fixed striped table-view-list users" style="margin-bottom: 2rem">
             <thead>
@@ -190,6 +237,10 @@ class Clients {
             <tbody>
             <?php if ( ! empty( $rules ) ) : ?>
                 <?php foreach ( $rules as $rule ): ?>
+                    <?php
+                    $remove_url = admin_url( self::$delete_url );
+                    $remove_url = add_query_arg( array( 'user' => $b2b_user->ID, 'rule' => $rule['id'] ), $remove_url );
+                    ?>
                     <tr>
                         <td><?php echo esc_html( $rule['name'] ); ?></td>
                         <td>
@@ -197,7 +248,7 @@ class Clients {
                             <?php echo ( $rule['price_type'] == 'percent' ) ? '%' : get_woocommerce_currency() ?>
                         </td>
                         <td>
-                            <a href="#" class="button button-secondary">
+                            <a href="<?php echo esc_url( $remove_url ); ?>" class="button button-secondary">
                                 <?php echo esc_html__( 'Usuń', 'netivo' ); ?>
                             </a>
                         </td>

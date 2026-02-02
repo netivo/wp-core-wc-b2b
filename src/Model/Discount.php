@@ -140,7 +140,7 @@ class Discount extends Entity {
 		}
 		if ( ! empty( $this->element ) ) {
 			if ( $this->type === 'product' ) {
-				return $this->element->get_name();
+				return $this->element->get_name() . ' (' . $this->element->get_sku() . ')';
 			} else {
 				return $this->element->name;
 			}
