@@ -156,6 +156,23 @@ class Module {
 	}
 
 	/**
+	 * Retrieves the URI of the module.
+	 *
+	 * @return false|string|null The module URI if available, false on failure, or null if the module path is empty.
+	 */
+	public static function get_module_uri(): false|string|null {
+		$path = Module::get_module_path();
+		if ( ! empty( $path ) ) {
+			$td   = get_template_directory();
+			$turl = get_template_directory_uri();
+
+			return str_replace( $td, $turl, $path );
+		}
+
+		return null;
+	}
+
+	/**
 	 * Registers a role and sets up initialization if the role exists.
 	 *
 	 * @return void
@@ -184,10 +201,10 @@ class Module {
 	}
 
 	public function style_and_script() {
-		wp_enqueue_style( 'nt-b2b-style', Module::get_module_path() . '/dist/netivo-b2b-archive.css' );
+		wp_enqueue_style( 'nt-b2b-style', self::get_module_uri() . '/dist/netivo-b2b-archive.css' );
 
 		$popup_handle = 'nt-b2b-popup';
-		wp_register_script( $popup_handle, Module::get_module_path() . '/dist/netivo-b2b-archive.js', [], null, true );
+		wp_register_script( $popup_handle, self::get_module_uri() . '/dist/netivo-b2b-archive.js', [], null, true );
 		wp_enqueue_script( $popup_handle );
 
 		wp_localize_script( $popup_handle, 'b2b_popup_vars', [
