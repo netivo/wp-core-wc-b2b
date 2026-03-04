@@ -112,6 +112,7 @@ class Module {
 
 		add_action( 'wp_enqueue_scripts', [ $this, 'style_and_script' ], 5 );
 		add_action( 'widgets_init', [ $this, 'add_sidebar' ], 100 );
+		add_filter( 'body_class', [ $this, 'add_b2b_class' ] );
 
 		$this->userController = new UserController();
 		new Product();
@@ -183,10 +184,10 @@ class Module {
 	}
 
 	public function style_and_script() {
-		wp_enqueue_style( 'nt-b2b-style', get_template_directory_uri() . '/vendor/netivo/wc-b2b/dist/netivo-b2b-archive.css' );
+		wp_enqueue_style( 'nt-b2b-style', Module::get_module_path() . '/dist/netivo-b2b-archive.css' );
 
 		$popup_handle = 'nt-b2b-popup';
-		wp_register_script( $popup_handle, get_template_directory_uri() . '/vendor/netivo/wc-b2b/dist/netivo-b2b-archive.js', [], null, true );
+		wp_register_script( $popup_handle, Module::get_module_path() . '/dist/netivo-b2b-archive.js', [], null, true );
 		wp_enqueue_script( $popup_handle );
 
 		wp_localize_script( $popup_handle, 'b2b_popup_vars', [
@@ -194,8 +195,8 @@ class Module {
 			'security' => wp_create_nonce( 'b2b_popup_nonce' ),
 		] );
 
-		wp_dequeue_script('wc-add-to-cart');
-		wp_deregister_script('wc-add-to-cart');
+		wp_dequeue_script( 'wc-add-to-cart' );
+		wp_deregister_script( 'wc-add-to-cart' );
 	}
 
 
@@ -210,6 +211,15 @@ class Module {
 			'after_title'   => '</h3>',
 		) );
 
+	}
+
+
+	public function add_b2b_class( $classes ) {
+		if ( Module::is_b2b_context() ) {
+			$classes[] = 'woocommerce--b2b';
 		}
 
+		return $classes;
 	}
+
+}

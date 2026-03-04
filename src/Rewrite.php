@@ -33,7 +33,10 @@ class Rewrite {
 	public function __construct() {
 		add_action( 'init', [ $this, 'register_shop_endpoints' ], 1 );
 		add_filter( 'query_vars', [ $this, 'register_query_vars' ], 0 );
-		add_filter( 'body_class', [ $this, 'add_b2b_class' ] );
+
+
+		add_filter( 'template_include', [ $this, 'change_template_include' ], 99 );
+		add_filter( 'wc_get_template_part', [ $this, 'change_wc_get_template_part' ], 99, 3 );
 
 	}
 
@@ -66,39 +69,6 @@ class Rewrite {
 		add_rewrite_rule( $b2b_base . '/' . $checkout_page->post_name . '/?$', 'index.php?page_id=' .
 		                                                                       $checkout_page->ID . '&b2b=1', 'top' );
 
-
-		add_filter( 'template_include', function ( $template ) {
-
-			if ( strpos( $template, 'archive-product.php' ) !== false && Module::is_b2b_context() ) {
-
-				$template_name = 'archive-product.php';
-				$template_path = 'woocommerce/b2b/';
-				$default_path  = Module::get_module_path() . '/woocommerce/b2b/';
-
-				$template = wc_locate_template( $template_name, $template_path, $default_path );
-
-			}
-
-			return $template;
-		}, 99 );
-
-		add_filter( 'wc_get_template_part', function ( $template, $slug, $name ) {
-
-			if ( $slug !== 'b2b' && Module::is_b2b_context()  ) {
-				return $template;
-			}
-
-
-
-			$template_name = $name.'.php';
-			$template_path = 'woocommerce/'.$slug.'/';
-			$default_path  = Module::get_module_path() . '/woocommerce/b2b/';
-
-			$located = wc_locate_template( $template_name, $template_path, $default_path );
-
-			return $located ? $located : $template;
-
-		}, 99, 3 );
 	}
 
 	/**
@@ -116,12 +86,38 @@ class Rewrite {
 		return $vars;
 	}
 
-	public function add_b2b_class( $classes ) {
-		if ( Module::is_b2b_context() ) {
-			$classes[] = 'woocommerce--b2b';
+	public function change_wc_get_template_part( $template, $slug, $name ) {
+
+		if ( $slug !== 'b2b' && Module::is_b2b_context() ) {
+			return $template;
 		}
 
-		return $classes;
+
+		$template_name = $name . '.php';
+		$template_path = 'woocommerce/' . $slug . '/';
+		$default_path  = Module::get_module_path() . '/woocommerce/b2b/';
+
+		$located = wc_locate_template( $template_name, $template_path, $default_path );
+
+		return $located ? $located : $template;
+
+	}
+
+	public function change_template_include( $template ) {
+
+
+		if ( strpos( $template, 'archive-product.php' ) !== false && Module::is_b2b_context() ) {
+
+			$template_name = 'archive-product.php';
+			$template_path = 'woocommerce/b2b/';
+			$default_path  = Module::get_module_path() . '/woocommerce/b2b/';
+
+			$template = wc_locate_template( $template_name, $template_path, $default_path );
+
+		}
+
+		return $template;
+
 	}
 
 
