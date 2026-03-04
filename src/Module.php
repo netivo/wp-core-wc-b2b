@@ -11,6 +11,7 @@ namespace Netivo\Module\WooCommerce\B2B;
 
 use Netivo\Core\Database\EntityManager;
 use Netivo\Module\WooCommerce\B2B\Admin\Panel;
+use Netivo\Module\WooCommerce\B2B\Controller\Product;
 use Netivo\Module\WooCommerce\B2B\Controller\User as UserController;
 use Netivo\Module\WooCommerce\B2B\Gutenberg\RegisterForm as RegisterFormBlock;
 use Netivo\Module\WooCommerce\B2B\Model\Discount as DiscountModel;
@@ -108,7 +109,12 @@ class Module {
 	 * @return void
 	 */
 	protected function __construct() {
+
+		add_action( 'wp_enqueue_scripts', [ $this, 'style_and_script' ], 5 );
+		add_action( 'widgets_init', [ $this, 'add_sidebar' ], 100 );
+
 		$this->userController = new UserController();
+		new Product();
 		new Rewrite();
 		new RegisterFormBlock();
 		EntityManager::createTable( DiscountModel::class );
@@ -175,4 +181,35 @@ class Module {
 			add_option( 'nt_b2b_role_exists', 1 );
 		}
 	}
-}
+
+	public function style_and_script() {
+		wp_enqueue_style( 'nt-b2b-style', get_template_directory_uri() . '/vendor/netivo/wc-b2b/dist/netivo-b2b-archive.css' );
+
+		$popup_handle = 'nt-b2b-popup';
+		wp_register_script( $popup_handle, get_template_directory_uri() . '/vendor/netivo/wc-b2b/dist/netivo-b2b-archive.js', [], null, true );
+		wp_enqueue_script( $popup_handle );
+
+		wp_localize_script( $popup_handle, 'b2b_popup_vars', [
+			'ajax_url' => admin_url( 'admin-ajax.php' ),
+			'security' => wp_create_nonce( 'b2b_popup_nonce' ),
+		] );
+
+		wp_dequeue_script('wc-add-to-cart');
+		wp_deregister_script('wc-add-to-cart');
+	}
+
+
+	public function add_sidebar() {
+		register_sidebar( array(
+			'name'          => __( 'Sidebar B2B', 'netivo' ),
+			'id'            => 'sidebar-b2b',
+			'description'   => __( 'Widgety wyświetlane w panelu B2B.', 'netivo' ),
+			'before_widget' => '<section id="%1$s" class="widget %2$s sidebar-b2b__widget">',
+			'after_widget'  => '</section>',
+			'before_title'  => '<h3 class="sidebar-b2b__title">',
+			'after_title'   => '</h3>',
+		) );
+
+		}
+
+	}
