@@ -88,7 +88,7 @@ class Rewrite {
 
 	public function change_wc_get_template_part( $template, $slug, $name ) {
 
-		if ( $slug !== 'b2b' && Module::is_b2b_context() ) {
+		if ( $slug !== 'b2b' || ! Module::is_b2b_context() ) {
 			return $template;
 		}
 
