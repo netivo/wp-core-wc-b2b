@@ -19,9 +19,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Product {
 
+	private static array $original_prices = [];
+
 	public function __construct() {
-		add_filter( 'woocommerce_product_get_price', [ $this, 'change_price' ], 10, 2 );
-		add_filter( 'woocommerce_product_get_backorder', [ $this, 'enable_backorder' ] );
+		add_filter( 'woocommerce_product_get_price', [ $this, 'change_price' ], 5, 2 );
+		add_filter( 'woocommerce_product_get_regular_price', [ $this, 'change_price' ], 5, 2 );
+		add_filter( 'woocommerce_product_get_sale_price', [ $this, 'change_price' ], 5, 2 );
+		//add_filter( 'woocommerce_get_price_html', [ $this, 'display_discount_price_html' ], 10, 2 );
+
+		$this->enable_backorder();
+
 	}
 
 	/**
@@ -33,13 +40,24 @@ class Product {
 	 * @return string The modified price of the product.
 	 */
 	public function change_price( string $price, \WC_Product $product ): string {
-		if ( ! is_admin() && Module::is_b2b_context() ) {
+
+		if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() && $price !== '') {
 			$discount = Discount::get_product_discount_for_user( get_current_user_id(), $product );
 			if ( ! empty( $discount ) ) {
-				if ( $discount->get_price_type() == 'fixed' ) {
-					return $discount->get_value();
-				} elseif ( $discount->get_price_type() == 'percentage' ) {
-					return ( ( 100 - intval( $discount->get_value() ) ) / 100 ) * $price;
+				if((float) $discount->get_value() == 0 ) return $price;
+//				self::$original_prices[ $product->get_id() ] = (float) $price;
+				if ( $discount->get_price_type() == 'price' ) {
+					$discount_value = (float) $discount->get_value();
+
+					// Przelicz zniżkę kwotową jeśli waluta ≠ PLN
+					$current_currency = get_woocommerce_currency();
+					if ( $current_currency !== 'PLN' ) {
+						$discount_value = (float) apply_filters( 'wcml_raw_price_amount', $discount_value, $current_currency );
+					}
+
+					return (string) max( 0.0, (float) $price - $discount_value );
+				} elseif ( $discount->get_price_type() == 'percent' ) {
+					return ( ( 100 - intval( $discount->get_value() ) ) / 100 ) * (float) $price;
 				}
 			}
 		}
@@ -47,11 +65,36 @@ class Product {
 		return $price;
 	}
 
-	public function enable_backorder( $backorder ) {
-		if ( ! is_admin() && Module::is_b2b_context() ) {
-			return 'yes';
-		}
-
-		return $backorder;
+	public function enable_backorder() {
+		add_filter( 'woocommerce_product_get_backorders', function ( $backorders ) {
+			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
+				return 'yes';
+			}
+			return $backorders;
+		} );
+		add_filter( 'woocommerce_product_variation_get_backorders', function ( $backorders ) {
+			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
+				return 'yes';
+			}
+			return $backorders;
+		} );
+		add_filter( 'woocommerce_product_get_stock_status', function ( $status ) {
+			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
+				return 'outofstock' === $status ? 'onbackorder' : $status;
+			}
+			return $status;
+		} );
+		add_filter( 'woocommerce_product_variation_get_stock_status', function ( $status ) {
+			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
+				return 'outofstock' === $status ? 'onbackorder' : $status;
+			}
+			return $status;
+		} );
+		add_filter( 'woocommerce_quantity_input_max', function ( $max, $product ) {
+			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
+				return -1;
+			}
+			return $max;
+		}, 10, 2 );
 	}
 }

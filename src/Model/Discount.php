@@ -136,6 +136,8 @@ class Discount extends Entity {
 				$this->element = wc_get_product( $this->type_id );
 			} elseif ( $this->type === 'category' ) {
 				$this->element = get_term( $this->type_id, 'product_cat' );
+			} elseif ( $this->type === 'brand' ) {
+				$this->element = get_term( $this->type_id, 'product_brand' );
 			}
 		}
 		if ( ! empty( $this->element ) ) {
@@ -179,7 +181,7 @@ class Discount extends Entity {
 	 * @return Discount|null An array of discounts if found, or null if no discounts are available.
 	 */
 	public static function get_product_discount_for_user( int|string $user_id, WC_Product $product ): ?Discount {
-		$em = EntityManager::get( self::class );
+		$em             = EntityManager::get( self::class );
 
 		try {
 			$product_discounts = $em->findAll( [
@@ -210,6 +212,30 @@ class Discount extends Entity {
 				}
 
 				return $max_discount;
+			}
+
+			$product_brand_ids = wp_get_post_terms( $product->get_id(), 'product_brand', [ 'fields' => 'ids' ] );
+			if ( ! is_wp_error( $product_brand_ids ) && ! empty( $product_brand_ids ) ) {
+				$brand_discounts = $em->findAll( [
+					'user_id' => [ 'type' => '%s', 'value' => $user_id ],
+					'type'    => [ 'type' => '%s', 'value' => 'brand' ],
+					'type_id' => [ 'operator' => 'IN', 'type' => '(%s)', 'value' => implode( ',', $product_brand_ids ) ]
+				] );
+				if ( ! empty( $brand_discounts ) ) {
+					if ( count( $brand_discounts ) === 1 ) {
+						return $brand_discounts[0];
+					}
+					$max          = 0;
+					$max_discount = null;
+					foreach ( $brand_discounts as $dsc ) {
+						if ( $dsc->get_value() > $max ) {
+							$max          = $dsc->get_value();
+							$max_discount = $dsc;
+						}
+					}
+
+					return $max_discount;
+				}
 			}
 		} catch ( \ReflectionException $e ) {
 			return null;

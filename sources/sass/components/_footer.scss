@@ -1,0 +1,67 @@
+
+.b2b-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  display: flex;
+  background-color: #f7f7f7;
+  padding: 10px 24px;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 2rem;
+  justify-content: center;
+  align-items: center;
+  z-index: 99;
+
+  @media screen and (max-width: 991px) {
+    bottom: 4rem;
+    max-width: 50%;
+    left: auto;
+    padding: 0.5rem 0.25rem !important;
+  }
+
+  .b2b-go-to-cart-wrapper {
+
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    @media screen and (max-width: 991px) {
+      width: 100%;
+    }
+
+    .button--disabled {
+      opacity: 0.4;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
+
+    .button {
+
+      @media screen and (max-width: 991px) {
+        width: 100%;
+        font-size: var(--fz-10) !important;
+        padding: 0.5rem 0.25rem !important;
+      }
+
+      @media screen and (max-width: 568px) {
+        font-size: var(--fz-8) !important;
+      }
+    }
+  }
+}
+
+.woocommerce--b2b {
+
+  &.woocommerce-checkout {
+
+    .b2b-footer {
+
+      @media screen and (max-width: 991px) {
+        max-width: 100%;
+      }
+    }
+  }
+}

@@ -69,7 +69,7 @@ class RequestDenied extends \WC_Email {
 	 * @since  3.1.0
 	 */
 	public function get_default_subject(): string {
-		return __( 'Twoje zgłoszenie B2B zostało zaakceptowane', 'netivo' );
+		return __( 'Twoje zgłoszenie B2B zostało odrzucone', 'netivo' );
 	}
 
 	/**
@@ -79,7 +79,7 @@ class RequestDenied extends \WC_Email {
 	 * @since  3.1.0
 	 */
 	public function get_default_heading(): string {
-		return __( 'Zgłoszenie zaakceptowane', 'netivo' );
+		return __( 'Zgłoszenie odrzucone', 'netivo' );
 	}
 
 	/**

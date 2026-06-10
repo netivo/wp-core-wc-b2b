@@ -37,7 +37,19 @@ class Product {
 	public function my_ajax_product_details() {
 		check_ajax_referer( 'b2b_popup_nonce', 'nonce' );
 
-		$id = $_POST['id'];
+		$id = intval( $_POST['id'] );
+
+		add_filter( 'wcml_multi_currency_ajax_actions', function ( $actions ) {
+			$actions[] = 'get_product_details';
+			return $actions;
+		} );
+
+		if ( ! empty( $_POST['currency'] ) ) {
+			$currency = sanitize_text_field( $_POST['currency'] );
+			add_filter( 'wcml_client_currency', function () use ( $currency ) {
+				return $currency;
+			} );
+		}
 
 		$product_post = get_post( $id );
 
@@ -50,7 +62,6 @@ class Product {
 			$product = wc_get_product( $id );
 
 			setup_postdata( $post );
-
 
 			wc_get_template_part( 'b2b', 'content-popup' );
 

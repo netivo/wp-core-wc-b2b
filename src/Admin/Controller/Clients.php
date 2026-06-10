@@ -89,7 +89,7 @@ class Clients {
         if ( ! empty( $_POST['add-rule'] ) ) {
             check_admin_referer( 'add-b2b-rule' );
 
-            if ( empty( $_POST['type'] ) || empty( $_POST['price_type'] ) || empty( $_POST['value'] ) ) {
+            if ( empty( $_POST['type'] ) || empty( $_POST['price_type'] ) || $_POST['value'] === '' ) {
                 Notice::add( __( 'Wypełnij wszystkie pola.', 'netivo' ), 'error' );
             } else {
 
@@ -98,7 +98,7 @@ class Clients {
                 $value      = sanitize_text_field( $_POST['value'] );
 
                 if ( empty( $_POST[ $type ] ) ) {
-                    Notice::add( __( 'Wybierz produkt lub kategorię do nadania rabatu', 'netivo' ) );
+                    Notice::add( __( 'Wybierz produkt, kategorię lub markę do nadania rabatu', 'netivo' ) );
                 } else {
                     $object_id = sanitize_text_field( $_POST[ $type ] );
 
@@ -175,6 +175,7 @@ class Clients {
 
         $category_rules = Discount::get_discounts_for_user( $b2b_user->ID, 'category' );
         $product_rules  = Discount::get_discounts_for_user( $b2b_user->ID, 'product' );
+        $brand_rules    = Discount::get_discounts_for_user( $b2b_user->ID, 'brand' );
 
         ?>
         <div class="wrap">
@@ -194,6 +195,9 @@ class Clients {
                 </div>
                 <div id="col-right">
                     <div class="col-wrap">
+                        <h2><?php echo esc_html__( 'Reguły marek' ); ?></h2>
+	                    <?php $this->print_rules_list( $brand_rules ); ?>
+
                         <h2><?php echo esc_html__( 'Reguły kategorii' ); ?></h2>
                         <?php $this->print_rules_list( $category_rules ); ?>
 
@@ -213,6 +217,11 @@ class Clients {
                 'taxonomy'   => 'product_cat',
                 'hide_empty' => false,
                 'exclude'    => Discount::get_discounts_for_user( $b2b_user->ID, 'category', 'ids' )
+        ) );
+        $brands = new WP_Term_Query( array(
+                'taxonomy'   => 'product_brand',
+                'hide_empty' => false,
+                'exclude'    => Discount::get_discounts_for_user( $b2b_user->ID, 'brand', 'ids' )
         ) );
 
         $form_action = admin_url( self::$rules_url );

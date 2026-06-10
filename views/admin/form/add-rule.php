@@ -6,6 +6,7 @@
  * Time: 15:25
  *
  * @var $categories WP_Term_Query
+ * @var $brands WP_Term_Query
  * @var $form_action string
  *
  */
@@ -22,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
             <select name="type" id="type" data-element="type-select" required aria-required="true">
                 <option value="product"><?php echo esc_html__( 'Produkt', 'netivo' ) ?></option>
                 <option value="category"><?php echo esc_html__( 'Kategoria', 'netivo' ) ?></option>
+                <option value="brand"><?php echo esc_html__( 'Marka', 'netivo' ) ?></option>
             </select>
         </div>
         <div class="form-field" data-element="category-select">
@@ -49,6 +51,19 @@ if ( ! defined( 'ABSPATH' ) ) {
             >
             </select>
         </div>
+        <div class="form-field" data-element="brand-select">
+            <label for="brand"><?php echo esc_html__( 'Marka', 'netivo' ); ?></label>
+            <select id="brand" class="wc-enhanced-select" name="brand" style="width: 100%;">
+                <option value=""><?php echo esc_html__( 'Wybierz markę ...', 'netivo' ); ?></option>
+                <?php if ( ! empty( $brands ) && ! empty( $brands->terms ) ) : ?>
+                    <?php foreach ( $brands->terms as $brand ) : ?>
+                        <option value="<?php echo esc_attr( $brand->term_id ); ?>">
+                            <?php echo esc_html( $brand->name ); ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </select>
+        </div>
         <div class="form-field form-required">
             <label for="price_type"><?php echo esc_html__( 'Typ rabatu', 'netivo' ) ?></label>
             <select name="price_type" id="type" data-element="type-select" required aria-required="true">
@@ -74,16 +89,21 @@ if ( ! defined( 'ABSPATH' ) ) {
     let typeSelect = form.querySelector( '[data-element="type-select"]' );
     let categorySelect = form.querySelector( '[data-element="category-select"]' );
     let productSelect = form.querySelector( '[data-element="product-select"]' );
+    let brandSelect = form.querySelector( '[data-element="brand-select"]' );
 
     let showType = () => {
       let type = typeSelect.value;
       categorySelect.style.display = 'none';
       productSelect.style.display = 'none';
+      brandSelect.style.display = 'none';
       if ( type === 'category' ) {
         categorySelect.style.display = 'block';
       }
       else if ( type === 'product' ) {
         productSelect.style.display = 'block';
+      }
+      else if ( type === 'brand' ) {
+        brandSelect.style.display = 'block';
       }
     };
 

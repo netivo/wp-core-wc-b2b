@@ -1,5 +1,21 @@
 /* b2b_popup_vars */
 
+import "./../components/change-url";
+import "./../components/quantity";
+import "./../components/checkout";
+import "./../components/checkout-btn";
+
+document.addEventListener("DOMContentLoaded", () => {
+  const cartModal = document.querySelector(".js-cart-modal");
+  if (cartModal) {
+    new MutationObserver(() => {
+      if (cartModal.classList.contains("modal--show")) {
+        cartModal.classList.remove("modal--show");
+      }
+    }).observe(cartModal, { attributeFilter: ["class"] });
+  }
+});
+
 document.addEventListener("DOMContentLoaded", () => {
   const products = document.querySelectorAll(
     ".b2b-content-loop-product .woocommerce-loop-product__title",
@@ -24,7 +40,9 @@ document.addEventListener("DOMContentLoaded", () => {
         body: new URLSearchParams({
           action: "get_product_details",
           id: product_id,
-          nonce: b2b_popup_vars.security, // Pobierz wartość nonce
+          nonce: b2b_popup_vars.security,
+          language: b2b_popup_vars.language,
+          currency: b2b_popup_vars.currency,
         }),
       })
         .then((response) => response.json())

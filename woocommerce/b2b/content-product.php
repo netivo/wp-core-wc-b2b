@@ -36,7 +36,7 @@ $extra_class = "b2b-content-loop-product";
 	$sku = $product ? $product->get_sku() : 'SKU';
 
 	?>
-	<span class="b2b-content-loop-product__sku"><?php echo esc_html( $sku ); ?></span>
+	<span class="b2b-content-loop-product__sku"><span class="b2b-content-loop-product__sku-prefix"><?php echo __('kod: ', 'netivo');?></span><?php echo esc_html( $sku ); ?></span>
 
 	<?php echo woocommerce_template_loop_product_title(); ?>
 
@@ -53,7 +53,7 @@ $extra_class = "b2b-content-loop-product";
 	}
 
 	?>
-	<div class="b2b-content-loop-product__stock_quantity <?php echo $class; ?>"><?php echo $stock_quantity; ?>SZT.</div>
+	<div class="b2b-content-loop-product__stock_quantity <?php echo $class; ?>"><span class="b2b-content-loop-product__stock_quantity-prefix"><?php echo __( 'mag: ', 'netivo' ) ?></span><?php echo $stock_quantity; ?> <?php echo __( ' szt.', 'netivo' ) ?></div>
 
 	<?php woocommerce_template_loop_price(); ?>
 

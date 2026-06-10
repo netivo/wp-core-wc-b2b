@@ -146,7 +146,9 @@ $breakpoints: (
 
   &:focus,
   &:hover {
+
     svg {
+
       @if $type == 'primary' {
         fill: var(--color-primary);
       } @else if $type == 'secondary' {

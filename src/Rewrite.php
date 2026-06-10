@@ -37,6 +37,7 @@ class Rewrite {
 
 		add_filter( 'template_include', [ $this, 'change_template_include' ], 99 );
 		add_filter( 'wc_get_template_part', [ $this, 'change_wc_get_template_part' ], 99, 3 );
+		add_action( 'wp_footer', [ $this, 'get_footer' ], 99 );
 
 	}
 
@@ -68,7 +69,9 @@ class Rewrite {
 		$checkout_page = get_post( get_option( 'woocommerce_checkout_page_id' ) );
 		add_rewrite_rule( $b2b_base . '/' . $checkout_page->post_name . '/?$', 'index.php?page_id=' .
 		                                                                       $checkout_page->ID . '&b2b=1', 'top' );
-
+		$wc_query_vars = WC()->query->get_query_vars();
+		add_rewrite_rule( $b2b_base . '/' . $checkout_page->post_name . '/'.$wc_query_vars['order-received'].'/(.+?)/?$', 'index.php?page_id=' .
+		                                                                       $checkout_page->ID . '&b2b=1&'.$wc_query_vars['order-received'].'=$matches[1]', 'top' );
 	}
 
 	/**
@@ -105,8 +108,13 @@ class Rewrite {
 
 	public function change_template_include( $template ) {
 
-
-		if ( strpos( $template, 'archive-product.php' ) !== false && Module::is_b2b_context() ) {
+		if (
+			(
+				strpos( $template, 'archive-product.php' ) !== false ||
+				strpos( $template, 'taxonomy-product-cat.php' ) !== false
+			)
+			&& Module::is_b2b_context()
+		) {
 
 			$template_name = 'archive-product.php';
 			$template_path = 'woocommerce/b2b/';
@@ -118,6 +126,12 @@ class Rewrite {
 
 		return $template;
 
+	}
+
+	public function get_footer() {
+		if ( Module::is_b2b_context() ) {
+			include Module::get_module_path() . '/woocommerce/b2b/footer.php';
+		}
 	}
 
 

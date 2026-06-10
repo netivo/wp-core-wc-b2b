@@ -11,7 +11,7 @@ global $product;
 	woocommerce_template_single_rating();
 	woocommerce_template_single_price();
 	woocommerce_template_single_excerpt();
-	woocommerce_template_single_meta();
-	woocommerce_template_single_sharing();
 	?>
+
+	<?php do_action( 'woocommerce_product_additional_information', $product ); ?>
 </div>
