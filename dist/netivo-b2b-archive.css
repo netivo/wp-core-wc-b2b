@@ -331,6 +331,23 @@
   right: 0;
   cursor: pointer;
 }
+.woocommerce--b2b .product-popup .product-popup__content .product-attributes {
+  width: 100%;
+}
+.woocommerce--b2b .product-popup .product-popup__content .product-attributes .product-attributes-item__label {
+  text-align: left;
+  font-size: 0.9rem;
+}
+.woocommerce--b2b .product-popup .product-popup__content .product-attributes .product-attributes-item__value {
+  text-align: left;
+  font-size: 0.9rem;
+}
+.woocommerce--b2b .product-popup .product-popup__content .product-attributes .product-attributes-item:nth-child(2n) {
+  background: #ededed;
+}
+.woocommerce--b2b .product-popup .product-popup__content .product-attributes .product-attributes-item p, .woocommerce--b2b .product-popup .product-popup__content .product-attributes .product-attributes-item a {
+  margin: 0;
+}
 .woocommerce--b2b .b2b-shop-search {
   display: flex;
   justify-content: space-between;
