@@ -59,6 +59,7 @@ class Clients extends WP_List_Table {
 			'nip'          => 'NIP',
 			'name'         => 'Imię i nazwisko',
 			'email'        => 'Email',
+			'currency'     => 'Waluta',
 			'date'         => 'Data rejestracji'
 		);
 	}
@@ -113,5 +114,9 @@ class Clients extends WP_List_Table {
 
 	protected function column_email( $item ): string {
 		return sprintf( '<a href="mailto:%s">%s</a>', esc_attr( $item->user_email ), esc_html( $item->user_email ) );
+	}
+
+	protected function column_currency( $item ): string {
+		return esc_html( get_user_meta( $item->ID, 'b2b_currency', true ) );
 	}
 }

@@ -31,6 +31,7 @@ $form_fields = [
         'email_address'    => __( 'Adres email', 'netivo' ),
         'phone_number'     => __( 'Numer telefonu', 'netivo' ),
         'company_nip'      => __( 'NIP', 'netivo' ),
+        'currency'         => __( 'Waluta', 'netivo' ),
         'message'          => __( 'Uzasadnienie', 'netivo' )
 ];
 

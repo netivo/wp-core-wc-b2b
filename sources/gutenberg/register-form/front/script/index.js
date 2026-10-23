@@ -19,6 +19,7 @@ if ( contact_form !== null ) {
           last_name:    '',
           email:        '',
           phone:        '',
+          currency:     '',
           message:      '',
           agree:        '',
           nonce:        '',
@@ -31,6 +32,7 @@ if ( contact_form !== null ) {
             form_last_name    = el.querySelector( '[name="last_name"]' ),
             form_email        = el.querySelector( '[name="email"]' ),
             form_phone        = el.querySelector( '[name="phone"]' ),
+            form_currency     = el.querySelector( '[name="currency"]' ),
             form_message      = el.querySelector( '[name="message"]' ),
             form_agree        = el.querySelector( '[name="agree"]' ),
             form_nonce        = el.querySelector( '[name="nonce"]' );
@@ -52,6 +54,9 @@ if ( contact_form !== null ) {
         }
         if ( form_phone !== null ) {
           data.phone = form_phone.value;
+        }
+        if ( form_currency !== null ) {
+          data.currency = form_currency.value;
         }
         if ( form_message !== null ) {
           data.message = form_message.value;
@@ -103,6 +108,7 @@ if ( contact_form !== null ) {
         el.querySelector( '[name="last_name"]' ).value = '';
         el.querySelector( '[name="email"]' ).value = '';
         el.querySelector( '[name="phone"]' ).value = '';
+        el.querySelector( '[name="currency"]' ).value = '';
         el.querySelector( '[name="message"]' ).value = '';
         el.querySelector( '#daneOsobowe' ).checked = false;
         formResponse.style.display = 'none';

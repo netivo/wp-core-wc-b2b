@@ -24,8 +24,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 do_action( 'woocommerce_email_header', $email_heading, $email ); ?>
 
-    <p><?php _e( 'Twoja prośba o konto B2B została zaakceptowana. Możesz się zalogować na swoje konto, wejść w zakładkę B2B i złożyć zamówienie. ', 'netivo' ); ?></p><?php // phpcs:ignore WordPress.XSS.EscapeOutput ?>
+    <p><?php _e( 'Dzień dobry', 'netivo'); ?></p>
 
+    <p><?php _e( 'dziękuję za zainteresowanie ofertą hurtową Warfactory. Nazywam się Marek Laskowski i w naszej firmie odpowiadam za opiekę nad klientami sklepowymi.', 'netivo'); ?>
+
+    <p><?php _e( 'Pod tym adresem: <a href="https://warfactory.pl/oferta-sklepowa/">warfactory.pl/oferta-sklepowa</a> znajdziesz wszystkie istotne informacje logistyczne oraz zestawienie naszych kluczowych marek. ', 'netivo' ); ?></p><?php // phpcs:ignore WordPress.XSS.EscapeOutput ?>
+
+    <p><?php _e( 'Twoje konto B2B zostało już aktywowane i możesz z niego korzystać', 'netivo' ); ?></p>
 
 <?php
 /*
