@@ -37,7 +37,19 @@ class Product {
 	public function my_ajax_product_details() {
 		check_ajax_referer( 'b2b_popup_nonce', 'nonce' );
 
-		$id = $_POST['id'];
+		$id = intval( $_POST['id'] );
+
+		add_filter( 'wcml_multi_currency_ajax_actions', function ( $actions ) {
+			$actions[] = 'get_product_details';
+			return $actions;
+		} );
+
+		if ( ! empty( $_POST['currency'] ) ) {
+			$currency = sanitize_text_field( $_POST['currency'] );
+			add_filter( 'wcml_client_currency', function () use ( $currency ) {
+				return $currency;
+			} );
+		}
 
 		$product_post = get_post( $id );
 
@@ -50,7 +62,6 @@ class Product {
 			$product = wc_get_product( $id );
 
 			setup_postdata( $post );
-
 
 			wc_get_template_part( 'b2b', 'content-popup' );
 
@@ -71,20 +82,87 @@ class Product {
 			return $search;
 		}
 
-		$product_id = wc_get_product_id_by_sku( $wp_query->query_vars['s'] );
-		if ( ! $product_id && $product_id != 0 ) {
+		$term = trim( wp_unslash( $wp_query->query_vars['s'] ) );
+
+		if ( '' === $term ) {
 			return $search;
 		}
 
-		if ( $product_id ) {
+		// Matches by SKU (_sku) or EAN/GTIN (_global_unique_id), partial match on either.
+		$like = '%' . $wpdb->esc_like( $term ) . '%';
+
+		$product_ids = $wpdb->get_col( $wpdb->prepare(
+			"SELECT DISTINCT post_id FROM {$wpdb->postmeta} WHERE meta_key IN ( '_sku', '_global_unique_id' ) AND meta_value LIKE %s",
+			$like
+		) );
+
+		if ( empty( $product_ids ) ) {
+			return $search;
+		}
+
+		// Variations should surface their parent product in the results.
+		$product_ids = array_unique( array_map( function ( $product_id ) {
 			$product = wc_get_product( $product_id );
-			if ( $product->is_type( 'variation' ) ) {
-				$product_id = $product->get_parent_id();
+			if ( $product && $product->is_type( 'variation' ) ) {
+				return $product->get_parent_id();
+			}
+
+			return (int) $product_id;
+		}, $product_ids ) );
+
+		$id_clause = "{$wpdb->posts}.ID IN (" . implode( ',', $product_ids ) . ")";
+
+		return $this->or_into_search_clause( $search, $id_clause );
+	}
+
+	/**
+	 * ORs an extra SQL condition into an existing "AND (...)" search clause produced
+	 * by WP_Query::parse_search() (or any other posts_search filter, such as this
+	 * theme's own exact-word search override in Theme\WooCommerce::search_exact_word()).
+	 *
+	 * Earlier versions of this method used str_replace( 'AND (((', ... ) which hard-coded
+	 * WordPress core's exact default search SQL shape. That broke silently as soon as
+	 * another posts_search filter running at an earlier priority produced a differently
+	 * shaped clause (e.g. a single-paren wrap instead of the triple-paren default) -
+	 * the string to replace simply no longer existed, so nothing was injected.
+	 *
+	 * This version finds the first top-level "AND ( ... )" group by counting
+	 * parentheses to its real matching close, so it works regardless of what produced
+	 * $search or how deeply its condition is nested.
+	 */
+	protected function or_into_search_clause( string $search, string $extra_condition ): string {
+		$and_pos = stripos( $search, 'AND (' );
+
+		if ( false === $and_pos ) {
+			// No existing search clause (e.g. $search is empty) - stand alone.
+			return " AND ({$extra_condition})";
+		}
+
+		$open_pos  = $and_pos + 4; // offset of the "(" right after "AND"
+		$depth     = 0;
+		$close_pos = null;
+
+		for ( $i = $open_pos, $len = strlen( $search ); $i < $len; $i++ ) {
+			if ( '(' === $search[ $i ] ) {
+				$depth++;
+			} elseif ( ')' === $search[ $i ] ) {
+				$depth--;
+				if ( 0 === $depth ) {
+					$close_pos = $i;
+					break;
+				}
 			}
 		}
 
-		$search = str_replace( 'AND (((', "AND (({$wpdb->posts}.ID IN (" . $product_id . ")) OR ((", $search );
+		if ( null === $close_pos ) {
+			// Unbalanced/unexpected shape - fall back to appending our own clause.
+			return $search . " OR ({$extra_condition})";
+		}
 
-		return $search;
+		$inner = substr( $search, $open_pos + 1, $close_pos - $open_pos - 1 );
+
+		return substr( $search, 0, $open_pos + 1 )
+			. "({$inner}) OR ({$extra_condition})"
+			. substr( $search, $close_pos );
 	}
 }

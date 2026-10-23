@@ -83,12 +83,13 @@ class Form extends RestController {
 		$company_nip      = sanitize_text_field( $request->get_param( 'nip' ) );
 		$email_address    = sanitize_text_field( $request->get_param( 'email' ) );
 		$phone_number     = sanitize_text_field( $request->get_param( 'phone' ) );
+		$currency         = sanitize_text_field( $request->get_param( 'currency' ) );
 		$message          = sanitize_text_field( $request->get_param( 'message' ) );
 		$captcha          = sanitize_text_field( $request->get_param( 'recaptcha' ) );
 		if ( ! empty( $personal_name ) && ! empty( $personal_surname ) && ! empty( $company_name ) && ! empty( $company_nip ) &&
-		     ! empty( $email_address ) && ! empty( $phone_number ) && ! empty( $message ) ) {
+		     ! empty( $email_address ) && ! empty( $phone_number ) && ! empty( $currency ) && ! empty( $message ) ) {
 			if ( ! $this->validate_captcha( $captcha ) ) {
-				return new \WP_Error( 500, __( 'Nieprawidłowa wartośc recaptcha.', 'netivo' ) );
+				return new \WP_Error( 500, __( 'Nieprawidłowa wartość recaptcha.', 'netivo' ) );
 			}
 
 			$user_data = [
@@ -97,7 +98,8 @@ class Form extends RestController {
 				'company_name'     => $company_name,
 				'email_address'    => $email_address,
 				'phone_number'     => $phone_number,
-				'company_nip'      => $company_nip
+				'company_nip'      => $company_nip,
+				'currency'         => $currency,
 			];
 
 			if ( Module::user_controller()->user_exists( $email_address ) ) {
@@ -148,12 +150,10 @@ class Form extends RestController {
 			curl_close( $ch );
 			$captcha_success = json_decode( $verify );
 			if ( $captcha_success->success === false || $captcha_success->action !== 'contact' ) {
-				if ( $captcha_success->success === false || $captcha_success->action !== 'contact' ) {
-					return false;
-				}
-
-				return true;
+				return false;
 			}
+
+			return true;
 		}
 
 		return false;

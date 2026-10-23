@@ -10,6 +10,7 @@
 namespace Netivo\Module\WooCommerce\B2B\Admin;
 
 use Netivo\Module\WooCommerce\B2B\Admin\Settings\Permalink;
+use Netivo\Module\WooCommerce\B2B\Admin\Settings\Shipping;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	header( 'HTTP/1.0 403 Forbidden' );
@@ -29,6 +30,7 @@ class Panel {
 	 */
 	public function __construct() {
 		new Permalink();
+		new Shipping();
 		new Menu();
 
 

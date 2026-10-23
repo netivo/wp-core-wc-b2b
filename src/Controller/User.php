@@ -66,10 +66,12 @@ class User {
 			update_user_meta( $user_id, 'billing_last_name', $data['personal_surname'] );
 			update_user_meta( $user_id, 'billing_phone', $data['phone_number'] );
 			update_user_meta( $user_id, 'billing_nip', $data['company_nip'] );
+			update_user_meta( $user_id, 'b2b_currency', $data['currency'] ?? '' );
 			update_user_meta( $user_id, 'subscribe_to_b2b', 1 );
 			update_user_meta( $user_id, 'b2b_message', $message );
 
-			wp_new_user_notification( $user_id, null, 'both' );
+			wp_new_user_notification( $user_id, null, 'admin' );
+			do_action( 'nt_b2b_new_account', $user_id );
 
 			return $user_id;
 		}
@@ -105,6 +107,7 @@ class User {
 				update_user_meta( $user->ID, 'billing_last_name', $data['personal_surname'] );
 				update_user_meta( $user->ID, 'billing_phone', $data['phone_number'] );
 				update_user_meta( $user->ID, 'billing_nip', $data['company_nip'] );
+				update_user_meta( $user->ID, 'b2b_currency', $data['currency'] ?? '' );
 				update_user_meta( $user->ID, 'subscribe_to_b2b', 1 );
 				update_user_meta( $user->ID, 'b2b_message', $message );
 

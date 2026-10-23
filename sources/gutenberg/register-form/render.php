@@ -74,6 +74,17 @@ $consent_text = $attributes['consent_text'] ?? '';
                    name="phone" id="phone" placeholder="<?php esc_attr_e( 'Telefon', 'netivo' ); ?>"/>
         </div>
     </div>
+    <div class="form__row">
+        <div class="form__group js-per">
+            <label class="form__label" for="currency"><?php esc_html_e( 'Waluta rozliczeń', 'netivo' ); ?></label>
+            <select required data-pristine-required-message="<?php esc_attr_e( 'To pole jest wymagane', 'netivo' ); ?>"
+                    class="form__input form__input--select" name="currency" id="currency">
+                <option value=""><?php esc_html_e( '-- Wybierz walutę --', 'netivo' ); ?></option>
+                <option value="PLN">PLN – Polski złoty</option>
+                <option value="EUR">EUR – Euro</option>
+            </select>
+        </div>
+    </div>
     <div class="form__group form__group-100 js-per">
         <label class="form__label" for="message"><?php esc_html_e( 'Wiadomość', 'netivo' ); ?></label>
         <textarea class="form__input form__input--textarea" required

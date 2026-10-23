@@ -60,6 +60,7 @@ class Requests extends WP_List_Table {
 			'name'         => 'Imię i nazwisko',
 			'email'        => 'Email',
 			'phone'        => 'Telefon',
+			'currency'     => 'Waluta',
 			'message'      => 'Wiadomość',
 			'date'         => 'Data rejestracji'
 		);
@@ -126,6 +127,10 @@ class Requests extends WP_List_Table {
 		$phone = get_user_meta( $item->ID, 'billing_phone', true );
 
 		return sprintf( '<a href="tel:%s">%s</a>', esc_attr( $phone ), esc_html( $phone ) );
+	}
+
+	protected function column_currency( $item ): string {
+		return esc_html( get_user_meta( $item->ID, 'b2b_currency', true ) );
 	}
 
 	protected function column_message( $item ): string {
