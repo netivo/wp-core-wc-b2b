@@ -168,36 +168,80 @@ class Product {
 		return $price;
 	}
 
-	public function enable_backorder() {
-		add_filter( 'woocommerce_product_get_backorders', function ( $backorders ) {
-			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
-				return 'yes';
-			}
-			return $backorders;
-		} );
-		add_filter( 'woocommerce_product_variation_get_backorders', function ( $backorders ) {
-			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
-				return 'yes';
-			}
-			return $backorders;
-		} );
-		add_filter( 'woocommerce_product_get_stock_status', function ( $status ) {
-			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
-				return 'outofstock' === $status ? 'onbackorder' : $status;
-			}
-			return $status;
-		} );
-		add_filter( 'woocommerce_product_variation_get_stock_status', function ( $status ) {
-			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
-				return 'outofstock' === $status ? 'onbackorder' : $status;
-			}
-			return $status;
-		} );
-		add_filter( 'woocommerce_quantity_input_max', function ( $max, $product ) {
-			if ( ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context() ) {
-				return -1;
-			}
-			return $max;
-		}, 10, 2 );
+	/**
+	 * Lets b2b clients order products below zero stock.
+	 *
+	 * The product's `backorders` getter must NOT be filtered here. WC_Product::validate_props()
+	 * calls get_backorders() in view context on every save (including the save inside
+	 * wc_update_product_stock() when a b2b order reduces stock), so a filtered 'yes' got
+	 * persisted as `_stock_status = onbackorder` for products with backorders disabled.
+	 * B2c customers then saw an active "add to cart" button on products they could not buy.
+	 *
+	 * Instead we filter the checks WooCommerce actually uses at runtime: backorders_allowed()
+	 * (cart, checkout, stock reservation, max purchase quantity) and
+	 * backorders_require_notification(). Stock status is only changed for display (view
+	 * context), the stored value is read in edit context and stays untouched.
+	 *
+	 * @return void
+	 */
+	public function enable_backorder(): void {
+		add_filter( 'woocommerce_product_backorders_allowed', [ $this, 'filter_backorders_allowed' ], 10, 1 );
+		add_filter( 'woocommerce_product_backorders_require_notification', [ $this, 'filter_backorders_require_notification' ], 10, 1 );
+		add_filter( 'woocommerce_product_get_stock_status', [ $this, 'filter_stock_status' ], 10, 1 );
+		add_filter( 'woocommerce_product_variation_get_stock_status', [ $this, 'filter_stock_status' ], 10, 1 );
+		add_filter( 'woocommerce_quantity_input_max', [ $this, 'filter_quantity_input_max' ], 10, 2 );
+	}
+
+	/**
+	 * @param bool $allowed Whether backorders are allowed for the product.
+	 *
+	 * @return bool
+	 */
+	public function filter_backorders_allowed( $allowed ): bool {
+		return self::is_b2b_backorder_context() ? true : (bool) $allowed;
+	}
+
+	/**
+	 * B2b clients always order on backorder, so they don't get the "available on backorder" notice
+	 * (same as before, when the backorders getter returned 'yes' instead of 'notify').
+	 *
+	 * @param bool $require Whether the backorder notification is required.
+	 *
+	 * @return bool
+	 */
+	public function filter_backorders_require_notification( $require ): bool {
+		return self::is_b2b_backorder_context() ? false : (bool) $require;
+	}
+
+	/**
+	 * @param string $status Stock status.
+	 *
+	 * @return string
+	 */
+	public function filter_stock_status( $status ) {
+		if ( self::is_b2b_backorder_context() && 'outofstock' === $status ) {
+			return 'onbackorder';
+		}
+
+		return $status;
+	}
+
+	/**
+	 * @param int|float $max Max quantity.
+	 * @param mixed     $product Product.
+	 *
+	 * @return int|float
+	 */
+	public function filter_quantity_input_max( $max, $product = null ) {
+		return self::is_b2b_backorder_context() ? -1 : $max;
+	}
+
+	/**
+	 * B2b storefront request (frontend or ajax/wc-ajax coming from the b2b panel).
+	 *
+	 * @return bool
+	 */
+	protected static function is_b2b_backorder_context(): bool {
+		return ( ! is_admin() || wp_doing_ajax() ) && Module::is_b2b_context();
 	}
 }
